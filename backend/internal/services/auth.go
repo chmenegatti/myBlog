@@ -111,7 +111,7 @@ func (s *authService) Register(req *RegisterRequest) (*models.User, error) {
 }
 
 func (s *authService) RefreshToken(tokenString string) (*LoginResponse, error) {
-	claims, err := ValidateJWT(tokenString)
+	claims, err := ValidateJWT(tokenString, s.jwtCfg.Secret)
 	if err != nil {
 		return nil, err
 	}
@@ -154,9 +154,9 @@ func (s *authService) generateToken(user *models.User) (string, error) {
 }
 
 // ValidateJWT validates and parses JWT token
-func ValidateJWT(tokenString string) (*JWTClaims, error) {
+func ValidateJWT(tokenString string, secret string) (*JWTClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &JWTClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte("your-secret-key"), nil // This should come from config
+		return []byte(secret), nil
 	})
 
 	if err != nil {

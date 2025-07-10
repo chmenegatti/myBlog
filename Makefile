@@ -72,6 +72,19 @@ fmt: ## Format Go code
 lint: ## Run Go linter (requires golangci-lint)
 	cd $(BACKEND_DIR) && golangci-lint run
 
+# Documentation commands
+docs-serve: ## Serve Swagger documentation (requires npx)
+	@echo "📚 Serving Swagger docs on http://localhost:3001"
+	@npx swagger-ui-serve docs/swagger.yaml -p 3001
+
+docs-validate: ## Validate Swagger documentation (requires npx)
+	@npx swagger-parser validate docs/swagger.yaml
+
+docs-convert: ## Convert YAML to JSON (requires python3 with PyYAML)
+	@echo "🔄 Converting swagger.yaml to swagger.json..."
+	@python3 -c "import yaml, json; json.dump(yaml.safe_load(open('docs/swagger.yaml')), open('docs/swagger.json', 'w'), indent=2)"
+	@echo "✅ swagger.json generated!"
+
 # Production commands
 prod-build: ## Build for production
 	cd $(BACKEND_DIR) && CGO_ENABLED=0 GOOS=linux $(GO_CMD) build -a -installsuffix cgo -o bin/myblog cmd/main.go
@@ -83,3 +96,31 @@ quick-start: ## Quick start for development (setup + dev environment + run)
 	@echo "Waiting for database to be ready..."
 	@sleep 5
 	@make dev
+
+# Documentation commands
+docs: ## Generate API documentation
+	@echo "📚 Gerando documentação da API..."
+	@./scripts/convert-swagger.sh
+
+swagger-json: ## Convert Swagger YAML to JSON
+	@./scripts/convert-swagger.sh
+
+docs-serve: ## Serve documentation locally (requires swagger-ui)
+	@echo "🌐 Servindo documentação localmente..."
+	@if command -v swagger-ui-serve &> /dev/null; then \
+		swagger-ui-serve docs/swagger.yaml -p 3001; \
+	else \
+		echo "❌ swagger-ui-serve não encontrado."; \
+		echo "Instale com: npm install -g swagger-ui-serve"; \
+		echo "Ou abra https://editor.swagger.io/ e importe docs/swagger.yaml"; \
+	fi
+
+docs-validate: ## Validate Swagger documentation
+	@echo "✅ Validando documentação Swagger..."
+	@if command -v swagger-codegen &> /dev/null; then \
+		swagger-codegen validate -i docs/swagger.yaml; \
+	elif command -v npx &> /dev/null; then \
+		npx swagger-parser validate docs/swagger.yaml; \
+	else \
+		echo "⚠️  Validador não encontrado. Use https://editor.swagger.io/ para validar"; \
+	fi

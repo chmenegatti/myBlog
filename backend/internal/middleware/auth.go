@@ -4,12 +4,13 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/chmenegatti/myBlog/internal/config"
 	"github.com/chmenegatti/myBlog/internal/services"
 	"github.com/gin-gonic/gin"
 )
 
 // AuthRequired middleware for protected routes
-func AuthRequired() gin.HandlerFunc {
+func AuthRequired(jwtConfig config.JWTConfig) gin.HandlerFunc {
 	return gin.HandlerFunc(func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
@@ -27,7 +28,7 @@ func AuthRequired() gin.HandlerFunc {
 		}
 
 		token := parts[1]
-		claims, err := services.ValidateJWT(token)
+		claims, err := services.ValidateJWT(token, jwtConfig.Secret)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 			c.Abort()

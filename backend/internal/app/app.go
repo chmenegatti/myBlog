@@ -114,7 +114,7 @@ func setupRouter(
 
 		// Protected routes
 		protected := api.Group("/")
-		protected.Use(middleware.AuthRequired())
+		protected.Use(middleware.AuthRequired(cfg.JWT))
 		{
 			// Users
 			users := protected.Group("/users")

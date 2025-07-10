@@ -1,0 +1,1157 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2025-07-10T00:00:00.000Z",
+  "__export_source": "insomnia.desktop.app:v2023.5.8",
+  "resources": [
+    {
+      "_id": "req_group_blog_api",
+      "_type": "request_group",
+      "parentId": "wrk_blog",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "name": "Blog Pessoal API",
+      "description": "API RESTful completa para gerenciamento de blog pessoal",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1689004800000
+    },
+    {
+      "_id": "wrk_blog",
+      "_type": "workspace",
+      "parentId": null,
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "name": "Blog Pessoal",
+      "description": "Blog pessoal com foco em TI, arquitetura de software e Golang",
+      "scope": "collection"
+    },
+    {
+      "_id": "env_blog",
+      "_type": "environment",
+      "parentId": "wrk_blog",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:8080/api/v1",
+        "auth_token": "",
+        "user_id": "",
+        "post_id": "",
+        "category_id": "",
+        "tag_id": "",
+        "comment_id": ""
+      },
+      "dataPropertyOrder": {
+        "&": [
+          "base_url",
+          "auth_token",
+          "user_id",
+          "post_id",
+          "category_id",
+          "tag_id",
+          "comment_id"
+        ]
+      },
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 1689004800000
+    },
+    {
+      "_id": "jar_cookies",
+      "_type": "cookie_jar",
+      "parentId": "wrk_blog",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "name": "Default Jar",
+      "cookies": []
+    },
+    {
+      "_id": "spc_blog",
+      "_type": "api_spec",
+      "parentId": "wrk_blog",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "fileName": "Blog Pessoal API",
+      "contents": "",
+      "contentType": "yaml"
+    },
+    {
+      "_id": "uts_blog",
+      "_type": "unit_test_suite",
+      "parentId": "wrk_blog",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "name": "Example Test Suite"
+    },
+    {
+      "_id": "req_group_auth",
+      "_type": "request_group",
+      "parentId": "req_group_blog_api",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "name": "🔐 Authentication",
+      "description": "Endpoints de autenticação e autorização",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1689004800000
+    },
+    {
+      "_id": "req_group_public",
+      "_type": "request_group",
+      "parentId": "req_group_blog_api",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "name": "🌐 Public",
+      "description": "Endpoints públicos (sem autenticação)",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1689004790000
+    },
+    {
+      "_id": "req_group_posts",
+      "_type": "request_group",
+      "parentId": "req_group_blog_api",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "name": "📝 Posts",
+      "description": "Gerenciamento de posts (autenticado)",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1689004780000
+    },
+    {
+      "_id": "req_group_users",
+      "_type": "request_group",
+      "parentId": "req_group_blog_api",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "name": "👥 Users",
+      "description": "Gerenciamento de usuários (autenticado)",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1689004770000
+    },
+    {
+      "_id": "req_group_categories",
+      "_type": "request_group",
+      "parentId": "req_group_blog_api",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "name": "📂 Categories",
+      "description": "Gerenciamento de categorias (autenticado)",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1689004760000
+    },
+    {
+      "_id": "req_group_tags",
+      "_type": "request_group",
+      "parentId": "req_group_blog_api",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "name": "🏷️ Tags",
+      "description": "Gerenciamento de tags (autenticado)",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1689004750000
+    },
+    {
+      "_id": "req_group_comments",
+      "_type": "request_group",
+      "parentId": "req_group_blog_api",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "name": "💬 Comments",
+      "description": "Gerenciamento de comentários (autenticado)",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1689004740000
+    },
+    {
+      "_id": "req_group_newsletter",
+      "_type": "request_group",
+      "parentId": "req_group_blog_api",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "name": "📧 Newsletter",
+      "description": "Gerenciamento de newsletter (autenticado)",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1689004730000
+    },
+    {
+      "_id": "req_health_check",
+      "_type": "request",
+      "parentId": "req_group_blog_api",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/health",
+      "name": "Health Check",
+      "description": "Verifica se a API está funcionando",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1689004800000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_auth_register",
+      "_type": "request",
+      "parentId": "req_group_auth",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/auth/register",
+      "name": "Register",
+      "description": "Registra um novo usuário",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"username\": \"admin\",\n  \"email\": \"admin@example.com\",\n  \"password\": \"123456\",\n  \"name\": \"Administrador\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1689004800000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_auth_login",
+      "_type": "request",
+      "parentId": "req_group_auth",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/auth/login",
+      "name": "Login",
+      "description": "Autentica um usuário e retorna JWT token",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"123456\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1689004790000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_auth_refresh",
+      "_type": "request",
+      "parentId": "req_group_auth",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/auth/refresh",
+      "name": "Refresh Token",
+      "description": "Renova o JWT token",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"token\": \"{{ _.auth_token }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1689004780000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_public_posts",
+      "_type": "request",
+      "parentId": "req_group_public",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/public/posts",
+      "name": "Lista Posts Publicados",
+      "description": "Retorna uma lista paginada de posts publicados",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "name": "limit",
+          "value": "10",
+          "description": "Número de posts por página"
+        },
+        {
+          "name": "offset",
+          "value": "0",
+          "description": "Offset para paginação"
+        }
+      ],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1689004800000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_public_post_by_slug",
+      "_type": "request",
+      "parentId": "req_group_public",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/public/posts/introducao-ao-go",
+      "name": "Busca Post por Slug",
+      "description": "Retorna um post específico pelo slug",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1689004790000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_public_categories",
+      "_type": "request",
+      "parentId": "req_group_public",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/public/categories",
+      "name": "Lista Categorias",
+      "description": "Retorna todas as categorias",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1689004780000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_public_tags",
+      "_type": "request",
+      "parentId": "req_group_public",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/public/tags",
+      "name": "Lista Tags",
+      "description": "Retorna todas as tags",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1689004770000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_public_create_comment",
+      "_type": "request",
+      "parentId": "req_group_public",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/public/comments",
+      "name": "Criar Comentário",
+      "description": "Cria um novo comentário em um post",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"post_id\": \"{{ _.post_id }}\",\n  \"name\": \"João Silva\",\n  \"email\": \"joao@example.com\",\n  \"website\": \"https://joaosilva.dev\",\n  \"content\": \"Excelente post! Muito esclarecedor.\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1689004760000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_public_newsletter_subscribe",
+      "_type": "request",
+      "parentId": "req_group_public",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/public/newsletter/subscribe",
+      "name": "Inscrever Newsletter",
+      "description": "Inscreve um email na newsletter",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"usuario@example.com\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1689004750000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_public_newsletter_unsubscribe",
+      "_type": "request",
+      "parentId": "req_group_public",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/public/newsletter/unsubscribe/TOKEN_AQUI",
+      "name": "Cancelar Newsletter",
+      "description": "Cancela a inscrição usando o token",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1689004740000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_posts_list",
+      "_type": "request",
+      "parentId": "req_group_posts",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/posts",
+      "name": "Lista Todos os Posts",
+      "description": "Lista todos os posts (incluindo rascunhos)",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "name": "limit",
+          "value": "10"
+        },
+        {
+          "name": "offset",
+          "value": "0"
+        },
+        {
+          "name": "status",
+          "value": "",
+          "description": "draft, published, archived"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.auth_token }}"
+      },
+      "metaSortKey": -1689004800000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_posts_create",
+      "_type": "request",
+      "parentId": "req_group_posts",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/posts",
+      "name": "Criar Post",
+      "description": "Cria um novo post",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"title\": \"Introdução ao Go\",\n  \"content\": \"# Introdução ao Go\\n\\nGo é uma linguagem incrível para desenvolvimento backend...\",\n  \"excerpt\": \"Uma introdução à linguagem Go e suas vantagens\",\n  \"featured_img\": \"https://example.com/go-intro.jpg\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.auth_token }}"
+      },
+      "metaSortKey": -1689004790000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_posts_get_by_id",
+      "_type": "request",
+      "parentId": "req_group_posts",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/posts/{{ _.post_id }}",
+      "name": "Buscar Post por ID",
+      "description": "Retorna um post específico pelo ID",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.auth_token }}"
+      },
+      "metaSortKey": -1689004780000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_posts_update",
+      "_type": "request",
+      "parentId": "req_group_posts",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/posts/{{ _.post_id }}",
+      "name": "Atualizar Post",
+      "description": "Atualiza um post específico",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"title\": \"Introdução ao Go - Atualizado\",\n  \"content\": \"# Introdução ao Go (Atualizado)\\n\\nGo é uma linguagem incrível...\",\n  \"excerpt\": \"Uma introdução atualizada à linguagem Go\",\n  \"featured_img\": \"https://example.com/go-intro-v2.jpg\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.auth_token }}"
+      },
+      "metaSortKey": -1689004770000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_posts_delete",
+      "_type": "request",
+      "parentId": "req_group_posts",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/posts/{{ _.post_id }}",
+      "name": "Deletar Post",
+      "description": "Deleta um post específico",
+      "method": "DELETE",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.auth_token }}"
+      },
+      "metaSortKey": -1689004760000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_posts_publish",
+      "_type": "request",
+      "parentId": "req_group_posts",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/posts/{{ _.post_id }}/publish",
+      "name": "Publicar Post",
+      "description": "Publica um post (muda status para published)",
+      "method": "POST",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.auth_token }}"
+      },
+      "metaSortKey": -1689004750000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_posts_unpublish",
+      "_type": "request",
+      "parentId": "req_group_posts",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/posts/{{ _.post_id }}/unpublish",
+      "name": "Despublicar Post",
+      "description": "Despublica um post (muda status para draft)",
+      "method": "POST",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.auth_token }}"
+      },
+      "metaSortKey": -1689004740000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_users_me",
+      "_type": "request",
+      "parentId": "req_group_users",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/users/me",
+      "name": "Meu Perfil",
+      "description": "Retorna o perfil do usuário autenticado",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.auth_token }}"
+      },
+      "metaSortKey": -1689004800000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_users_update_me",
+      "_type": "request",
+      "parentId": "req_group_users",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/users/me",
+      "name": "Atualizar Meu Perfil",
+      "description": "Atualiza o perfil do usuário autenticado",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Administrador Atualizado\",\n  \"bio\": \"Desenvolvedor Go apaixonado por tecnologia e arquitetura de software\",\n  \"avatar\": \"https://example.com/new-avatar.jpg\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.auth_token }}"
+      },
+      "metaSortKey": -1689004790000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_users_list",
+      "_type": "request",
+      "parentId": "req_group_users",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/users",
+      "name": "Lista Usuários",
+      "description": "Retorna uma lista paginada de usuários",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "name": "limit",
+          "value": "10"
+        },
+        {
+          "name": "offset",
+          "value": "0"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.auth_token }}"
+      },
+      "metaSortKey": -1689004780000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_categories_create",
+      "_type": "request",
+      "parentId": "req_group_categories",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/categories",
+      "name": "Criar Categoria",
+      "description": "Cria uma nova categoria",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Golang\",\n  \"description\": \"Posts sobre a linguagem Go\",\n  \"color\": \"#00ADD8\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.auth_token }}"
+      },
+      "metaSortKey": -1689004800000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_categories_update",
+      "_type": "request",
+      "parentId": "req_group_categories",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/categories/{{ _.category_id }}",
+      "name": "Atualizar Categoria",
+      "description": "Atualiza uma categoria específica",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Go Language\",\n  \"description\": \"Posts sobre a linguagem Go e suas aplicações\",\n  \"color\": \"#00ADD8\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.auth_token }}"
+      },
+      "metaSortKey": -1689004790000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_categories_delete",
+      "_type": "request",
+      "parentId": "req_group_categories",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/categories/{{ _.category_id }}",
+      "name": "Deletar Categoria",
+      "description": "Deleta uma categoria específica",
+      "method": "DELETE",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.auth_token }}"
+      },
+      "metaSortKey": -1689004780000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_tags_create",
+      "_type": "request",
+      "parentId": "req_group_tags",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/tags",
+      "name": "Criar Tag",
+      "description": "Cria uma nova tag",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Tutorial\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.auth_token }}"
+      },
+      "metaSortKey": -1689004800000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_tags_update",
+      "_type": "request",
+      "parentId": "req_group_tags",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/tags/{{ _.tag_id }}",
+      "name": "Atualizar Tag",
+      "description": "Atualiza uma tag específica",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Tutorial Avançado\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.auth_token }}"
+      },
+      "metaSortKey": -1689004790000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_tags_delete",
+      "_type": "request",
+      "parentId": "req_group_tags",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/tags/{{ _.tag_id }}",
+      "name": "Deletar Tag",
+      "description": "Deleta uma tag específica",
+      "method": "DELETE",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.auth_token }}"
+      },
+      "metaSortKey": -1689004780000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_comments_list",
+      "_type": "request",
+      "parentId": "req_group_comments",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/comments",
+      "name": "Lista Comentários",
+      "description": "Retorna uma lista paginada de comentários",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "name": "limit",
+          "value": "10"
+        },
+        {
+          "name": "offset",
+          "value": "0"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.auth_token }}"
+      },
+      "metaSortKey": -1689004800000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_comments_approve",
+      "_type": "request",
+      "parentId": "req_group_comments",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/comments/{{ _.comment_id }}/approve",
+      "name": "Aprovar Comentário",
+      "description": "Aprova um comentário (muda status para approved)",
+      "method": "POST",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.auth_token }}"
+      },
+      "metaSortKey": -1689004790000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_comments_reject",
+      "_type": "request",
+      "parentId": "req_group_comments",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/comments/{{ _.comment_id }}/reject",
+      "name": "Rejeitar Comentário",
+      "description": "Rejeita um comentário (muda status para rejected)",
+      "method": "POST",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.auth_token }}"
+      },
+      "metaSortKey": -1689004780000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_comments_delete",
+      "_type": "request",
+      "parentId": "req_group_comments",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/comments/{{ _.comment_id }}",
+      "name": "Deletar Comentário",
+      "description": "Deleta um comentário específico",
+      "method": "DELETE",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.auth_token }}"
+      },
+      "metaSortKey": -1689004770000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_newsletter_subscribers",
+      "_type": "request",
+      "parentId": "req_group_newsletter",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/newsletter/subscribers",
+      "name": "Lista Inscritos",
+      "description": "Retorna uma lista paginada de inscritos na newsletter",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "name": "limit",
+          "value": "10"
+        },
+        {
+          "name": "offset",
+          "value": "0"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.auth_token }}"
+      },
+      "metaSortKey": -1689004800000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_newsletter_delete_subscriber",
+      "_type": "request",
+      "parentId": "req_group_newsletter",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/newsletter/subscribers/SUBSCRIBER_ID",
+      "name": "Remover Inscrito",
+      "description": "Remove um inscrito da newsletter",
+      "method": "DELETE",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.auth_token }}"
+      },
+      "metaSortKey": -1689004790000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    }
+  ]
+}
