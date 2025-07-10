@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: myblog_postgres
+    environment:
+      POSTGRES_DB: myblog
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - myblog_network
+
+  # Blog Backend API
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: myblog_api
+    environment:
+      SERVER_PORT: 8080
+      SERVER_ENV: development
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: myblog
+      DB_SSL_MODE: disable
+      JWT_SECRET: your-super-secret-jwt-key-change-this-in-production
+      JWT_EXPIRATION: 24
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - myblog_network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  myblog_network:
+    driver: bridge

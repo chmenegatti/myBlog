@@ -1,0 +1,80 @@
+# Blog Pessoal
+
+## Logs
+*.log
+
+## Temporary files
+*.tmp
+*.temp
+
+## OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+## Go specific
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bin/
+dist/
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+
+# Dependency directories
+vendor/
+
+# Go workspace file
+go.work
+
+## Backend specific
+backend/.env
+backend/bin/
+backend/*.log
+
+## Frontend specific (for future use)
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/.nuxt/
+frontend/.vscode/
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+## Database
+*.db
+*.sqlite
+
+## Docker
+.docker/
+
+## IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+## Environment files
+.env
+.env.local
+.env.*.local
+
+## Certificates
+*.pem
+*.key
+*.crt
