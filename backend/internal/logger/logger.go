@@ -65,7 +65,7 @@ func Initialize(logLevel, logFormat, logOutput string) error {
 	}
 
 	Logger = lazylog.NewLogger(transports...)
-	
+
 	// Test the logger to make sure it works
 	defer func() {
 		if r := recover(); r != nil {
@@ -76,10 +76,10 @@ func Initialize(logLevel, logFormat, logOutput string) error {
 			})
 		}
 	}()
-	
+
 	// Test log to verify everything works
 	Logger.Info("Logger initialized successfully")
-	
+
 	return nil
 }
 
