@@ -78,7 +78,7 @@ func Load() (*Config, error) {
 			Expiration: getEnvAsInt("JWT_EXPIRATION", 24),
 		},
 		CORS: CORSConfig{
-			AllowedOrigins: []string{"http://localhost:3000", "http://localhost:5173"},
+			AllowedOrigins: []string{"http://localhost:3000", "http://localhost:5173", "http://localhost:5174"},
 			AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 			AllowedHeaders: []string{"Content-Type", "Authorization"},
 		},

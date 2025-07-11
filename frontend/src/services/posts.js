@@ -138,7 +138,6 @@ export const postsService = {
   },
 
   // PROTECTED ROUTES (for admin/authenticated users)
-  
   // Get all posts for admin (PROTECTED ROUTE)
   getAdminPosts: async (page = 1, limit = 10) => {
     const params = new URLSearchParams({
@@ -189,7 +188,6 @@ export const postsService = {
   },
 
   // CATEGORY MANAGEMENT (PROTECTED ROUTES)
-  
   // Create category (PROTECTED ROUTE)
   createCategory: async categoryData => {
     const response = await api.post('/categories', categoryData);
@@ -209,7 +207,6 @@ export const postsService = {
   },
 
   // TAG MANAGEMENT (PROTECTED ROUTES)
-  
   // Create tag (PROTECTED ROUTE)
   createTag: async tagData => {
     const response = await api.post('/tags', tagData);
