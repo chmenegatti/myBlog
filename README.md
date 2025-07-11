@@ -190,10 +190,10 @@ JWT_EXPIRATION=24
 ## 🧪 Próximos Passos
 
 - [ ] Testes unitários e de integração
-- [ ] Upload de imagens
+- [x] Upload de imagens
 - [ ] Sistema de cache (Redis)
 - [ ] Rate limiting
-- [ ] Logs estruturados
+- [x] Logs estruturados
 - [ ] Métricas e monitoramento
 - [ ] CI/CD pipeline
 - [ ] SEO optimization
