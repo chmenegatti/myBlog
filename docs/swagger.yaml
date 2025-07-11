@@ -326,7 +326,7 @@ paths:
       security:
         - BearerAuth: []
       requestBody:
-        required: !!bool true
+        required: true
         content:
           multipart/form-data:
             schema:
@@ -431,8 +431,8 @@ paths:
         - BearerAuth: []
       parameters:
         - name: id
-          required: true
           in: path
+          required: true
           description: ID da imagem
           schema:
             type: string

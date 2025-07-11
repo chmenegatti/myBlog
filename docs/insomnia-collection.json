@@ -40,7 +40,8 @@
         "post_id": "",
         "category_id": "",
         "tag_id": "",
-        "comment_id": ""
+        "comment_id": "",
+        "image_id": ""
       },
       "dataPropertyOrder": {
         "&": [
@@ -50,7 +51,8 @@
           "post_id",
           "category_id",
           "tag_id",
-          "comment_id"
+          "comment_id",
+          "image_id"
         ]
       },
       "color": null,
@@ -179,6 +181,18 @@
       "environment": {},
       "environmentPropertyOrder": null,
       "metaSortKey": -1689004730000
+    },
+    {
+      "_id": "req_group_images",
+      "_type": "request_group",
+      "parentId": "req_group_blog_api",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "name": "🖼️ Images",
+      "description": "Upload e gerenciamento de imagens (autenticado)",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1689004720000
     },
     {
       "_id": "req_health_check",
@@ -1145,6 +1159,263 @@
         "token": "{{ _.auth_token }}"
       },
       "metaSortKey": -1689004790000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_images_upload",
+      "_type": "request",
+      "parentId": "req_group_images",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/images/upload",
+      "name": "Upload Imagem",
+      "description": "Faz upload de uma imagem com categoria específica",
+      "method": "POST",
+      "body": {
+        "mimeType": "multipart/form-data",
+        "params": [
+          {
+            "id": "pair_img_file",
+            "name": "file",
+            "value": "",
+            "description": "Arquivo de imagem (JPEG, PNG, GIF)",
+            "type": "file",
+            "fileName": ""
+          },
+          {
+            "id": "pair_img_category",
+            "name": "category",
+            "value": "general",
+            "description": "Categoria: avatar, featured, content, general",
+            "type": "text"
+          }
+        ]
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.auth_token }}"
+      },
+      "metaSortKey": -1689004800000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_images_list_my",
+      "_type": "request",
+      "parentId": "req_group_images",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/images/my",
+      "name": "Listar Minhas Imagens",
+      "description": "Lista todas as imagens do usuário autenticado",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "id": "pair_limit",
+          "name": "limit",
+          "value": "20",
+          "description": "Número máximo de imagens (1-100)"
+        },
+        {
+          "id": "pair_offset",
+          "name": "offset",
+          "value": "0",
+          "description": "Número de imagens a pular"
+        },
+        {
+          "id": "pair_category",
+          "name": "category",
+          "value": "",
+          "description": "Filtrar por categoria (opcional)"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.auth_token }}"
+      },
+      "metaSortKey": -1689004790000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_images_list_all",
+      "_type": "request",
+      "parentId": "req_group_images",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/images/all",
+      "name": "Listar Todas Imagens (Admin)",
+      "description": "Lista todas as imagens no sistema (apenas admin)",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "id": "pair_limit_all",
+          "name": "limit",
+          "value": "20",
+          "description": "Número máximo de imagens (1-100)"
+        },
+        {
+          "id": "pair_offset_all",
+          "name": "offset",
+          "value": "0",
+          "description": "Número de imagens a pular"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.auth_token }}"
+      },
+      "metaSortKey": -1689004780000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_images_get_by_id",
+      "_type": "request",
+      "parentId": "req_group_images",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/images/{{ _.image_id }}",
+      "name": "Buscar Imagem por ID",
+      "description": "Retorna os detalhes de uma imagem específica",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.auth_token }}"
+      },
+      "metaSortKey": -1689004770000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_images_delete",
+      "_type": "request",
+      "parentId": "req_group_images",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/images/{{ _.image_id }}",
+      "name": "Remover Imagem",
+      "description": "Remove uma imagem do sistema",
+      "method": "DELETE",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.auth_token }}"
+      },
+      "metaSortKey": -1689004760000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_images_upload_avatar",
+      "_type": "request",
+      "parentId": "req_group_images",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/images/avatar",
+      "name": "Upload Avatar",
+      "description": "Upload específico para avatar (redimensiona para 200x200px)",
+      "method": "POST",
+      "body": {
+        "mimeType": "multipart/form-data",
+        "params": [
+          {
+            "id": "pair_avatar_file",
+            "name": "file",
+            "value": "",
+            "description": "Arquivo de imagem para avatar",
+            "type": "file",
+            "fileName": ""
+          }
+        ]
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.auth_token }}"
+      },
+      "metaSortKey": -1689004750000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_images_upload_featured",
+      "_type": "request",
+      "parentId": "req_group_images",
+      "modified": 1689004800000,
+      "created": 1689004800000,
+      "url": "{{ _.base_url }}/images/featured",
+      "name": "Upload Imagem Destacada",
+      "description": "Upload específico para imagem destacada (redimensiona para 1200x630px)",
+      "method": "POST",
+      "body": {
+        "mimeType": "multipart/form-data",
+        "params": [
+          {
+            "id": "pair_featured_file",
+            "name": "file",
+            "value": "",
+            "description": "Arquivo de imagem destacada",
+            "type": "file",
+            "fileName": ""
+          }
+        ]
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.auth_token }}"
+      },
+      "metaSortKey": -1689004740000,
       "isPrivate": false,
       "settingStoreCookies": true,
       "settingSendCookies": true,
