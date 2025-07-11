@@ -114,13 +114,17 @@ logger.WithPerformance(operation, duration, memoryUsage).Warn("Slow operation")
 ## Transports Configurados
 
 ### Console
+
 Saída colorizada no terminal com timestamps.
 
 ### File
+
 Logs salvos em arquivo simples.
 
 ### File-Rotate
+
 Logs com rotação automática usando lumberjack:
+
 - Tamanho máximo: 100MB por arquivo
 - Máximo de backups: 3 arquivos
 - Compressão automática dos backups
@@ -128,6 +132,7 @@ Logs com rotação automática usando lumberjack:
 ## Formatters Disponíveis
 
 ### JSON
+
 Logs estruturados em formato JSON para sistemas de monitoramento.
 
 ```json
@@ -142,16 +147,18 @@ Logs estruturados em formato JSON para sistemas de monitoramento.
 ```
 
 ### Text
+
 Logs em formato texto legível para desenvolvimento.
 
-```
+```bash
 2024-01-15 10:30:00 [INFO] [user-service] User created user_id=123 email=user@example.com
 ```
 
 ### Emoji
+
 Logs com emojis para facilitar visualização durante desenvolvimento.
 
-```
+```bash
 🔵 2024-01-15 10:30:00 [INFO] [user-service] User created user_id=123 email=user@example.com
 🔴 2024-01-15 10:30:00 [ERROR] [auth-service] Login failed email=user@example.com reason=invalid_password
 ```
@@ -168,6 +175,7 @@ Logs com emojis para facilitar visualização durante desenvolvimento.
 ## Exemplos de Saída
 
 ### Requisição HTTP (JSON)
+
 ```json
 {
   "timestamp": "2024-01-15T10:30:00Z",
@@ -185,13 +193,15 @@ Logs com emojis para facilitar visualização durante desenvolvimento.
 ```
 
 ### Autenticação (Emoji)
-```
+
+```bash
 ✅ 2024-01-15 10:30:00 [INFO] [auth] Authentication successful email=user@example.com action=login
 ❌ 2024-01-15 10:30:05 [WARN] [auth] Authentication failed email=wrong@example.com action=login reason=invalid_password
 ```
 
 ### Operação de Banco (Text)
-```
+
+```bash
 2024-01-15 10:30:00 [DEBUG] [database] Database operation completed operation=INSERT table=users rows=1 duration=25ms
 ```
 
@@ -216,11 +226,13 @@ O sistema de logs estruturados facilita a integração com ferramentas de monito
 ## Troubleshooting
 
 ### Logs não aparecem
+
 1. Verifique se o nível está correto (DEBUG < INFO < WARN < ERROR)
 2. Verifique as variáveis de ambiente LOG_*
 3. Verifique se o logger foi inicializado antes do uso
 
 ### Performance
+
 1. Use níveis apropriados em produção (INFO ou WARN)
 2. File-rotate é mais eficiente que file simples
 3. JSON é mais eficiente para parsing automático
