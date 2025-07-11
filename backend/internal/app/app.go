@@ -30,6 +30,7 @@ func New(cfg *config.Config) (*App, error) {
 	tagRepo := repositories.NewTagRepository(db.GetDB())
 	commentRepo := repositories.NewCommentRepository(db.GetDB())
 	newsletterRepo := repositories.NewNewsletterRepository(db.GetDB())
+	imageRepo := repositories.NewImageRepository(db.GetDB())
 
 	// Initialize services
 	authService := services.NewAuthService(userRepo, cfg.JWT)
@@ -38,6 +39,7 @@ func New(cfg *config.Config) (*App, error) {
 	categoryService := services.NewCategoryService(categoryRepo)
 	tagService := services.NewTagService(tagRepo)
 	commentService := services.NewCommentService(commentRepo)
+	imageService := services.NewImageService(imageRepo, cfg.Upload.Path, cfg.Upload.BaseURL)
 	newsletterService := services.NewNewsletterService(newsletterRepo)
 
 	// Initialize handlers
@@ -48,9 +50,10 @@ func New(cfg *config.Config) (*App, error) {
 	tagHandler := handlers.NewTagHandler(tagService)
 	commentHandler := handlers.NewCommentHandler(commentService)
 	newsletterHandler := handlers.NewNewsletterHandler(newsletterService)
+	imageHandler := handlers.NewImageHandler(imageService)
 
 	// Setup router
-	router := setupRouter(cfg, authHandler, userHandler, postHandler, categoryHandler, tagHandler, commentHandler, newsletterHandler)
+	router := setupRouter(cfg, authHandler, userHandler, postHandler, categoryHandler, tagHandler, commentHandler, newsletterHandler, imageHandler)
 
 	return &App{
 		config: cfg,
@@ -72,6 +75,7 @@ func setupRouter(
 	tagHandler *handlers.TagHandler,
 	commentHandler *handlers.CommentHandler,
 	newsletterHandler *handlers.NewsletterHandler,
+	imageHandler *handlers.ImageHandler,
 ) *gin.Engine {
 	if cfg.Server.Env == "production" {
 		gin.SetMode(gin.ReleaseMode)
@@ -171,8 +175,23 @@ func setupRouter(
 				newsletter.GET("/subscribers", newsletterHandler.GetSubscribers)
 				newsletter.DELETE("/subscribers/:id", newsletterHandler.DeleteSubscriber)
 			}
+
+			// Images
+			images := protected.Group("/images")
+			{
+				images.POST("/upload", imageHandler.UploadImage)
+				images.GET("/my", imageHandler.GetUserImages)
+				images.GET("/all", imageHandler.GetAllImages) // Admin only
+				images.GET("/:id", imageHandler.GetImage)
+				images.DELETE("/:id", imageHandler.DeleteImage)
+				images.POST("/avatar", imageHandler.UploadAvatar)
+				images.POST("/featured", imageHandler.UploadFeaturedImage)
+			}
 		}
 	}
+
+	// Static file serving for uploads
+	router.Static("/uploads", cfg.Upload.Path)
 
 	return router
 }

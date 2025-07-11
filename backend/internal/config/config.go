@@ -13,6 +13,7 @@ type Config struct {
 	Database DatabaseConfig
 	JWT      JWTConfig
 	CORS     CORSConfig
+	Upload   UploadConfig
 }
 
 type ServerConfig struct {
@@ -32,6 +33,12 @@ type DatabaseConfig struct {
 type JWTConfig struct {
 	Secret     string
 	Expiration int // hours
+}
+
+type UploadConfig struct {
+	Path    string
+	BaseURL string
+	MaxSize int64 // in bytes
 }
 
 type CORSConfig struct {
@@ -68,6 +75,11 @@ func Load() (*Config, error) {
 			AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 			AllowedHeaders: []string{"Content-Type", "Authorization"},
 		},
+		Upload: UploadConfig{
+			Path:    getEnv("UPLOAD_PATH", "./uploads"),
+			BaseURL: getEnv("UPLOAD_BASE_URL", "http://localhost:8080"),
+			MaxSize: getEnvAsInt64("UPLOAD_MAX_SIZE", 5<<20), // 5MB default
+		},
 	}
 
 	return cfg, nil
@@ -83,6 +95,15 @@ func getEnv(key, defaultValue string) string {
 func getEnvAsInt(key string, defaultValue int) int {
 	if value := os.Getenv(key); value != "" {
 		if intValue, err := strconv.Atoi(value); err == nil {
+			return intValue
+		}
+	}
+	return defaultValue
+}
+
+func getEnvAsInt64(key string, defaultValue int64) int64 {
+	if value := os.Getenv(key); value != "" {
+		if intValue, err := strconv.ParseInt(value, 10, 64); err == nil {
 			return intValue
 		}
 	}

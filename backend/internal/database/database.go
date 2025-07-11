@@ -33,6 +33,7 @@ func New(cfg config.DatabaseConfig) (*DB, error) {
 		&models.Tag{},
 		&models.Comment{},
 		&models.Newsletter{},
+		&models.Image{},
 	); err != nil {
 		return nil, fmt.Errorf("failed to migrate database: %w", err)
 	}

@@ -131,3 +131,34 @@ type Newsletter struct {
 	UpdatedAt   time.Time      `json:"updated_at"`
 	DeletedAt   gorm.DeletedAt `json:"-" gorm:"index"`
 }
+
+// Image represents an uploaded image
+type Image struct {
+	ID           uuid.UUID      `json:"id" gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
+	FileName     string         `json:"file_name" gorm:"not null"`
+	OriginalName string         `json:"original_name" gorm:"not null"`
+	MimeType     string         `json:"mime_type" gorm:"not null"`
+	Size         int64          `json:"size" gorm:"not null"`
+	Path         string         `json:"path" gorm:"not null"`
+	URL          string         `json:"url" gorm:"not null"`
+	Width        int            `json:"width"`
+	Height       int            `json:"height"`
+	UploadedBy   uuid.UUID      `json:"uploaded_by" gorm:"type:uuid;not null"`
+	IsActive     bool           `json:"is_active" gorm:"default:true"`
+	CreatedAt    time.Time      `json:"created_at"`
+	UpdatedAt    time.Time      `json:"updated_at"`
+	DeletedAt    gorm.DeletedAt `json:"-" gorm:"index"`
+
+	// Relationships
+	Uploader User `json:"uploader,omitempty" gorm:"foreignKey:UploadedBy"`
+}
+
+// ImageCategory represents different types of images
+type ImageCategory string
+
+const (
+	ImageCategoryAvatar   ImageCategory = "avatar"
+	ImageCategoryFeatured ImageCategory = "featured"
+	ImageCategoryContent  ImageCategory = "content"
+	ImageCategoryGeneral  ImageCategory = "general"
+)
