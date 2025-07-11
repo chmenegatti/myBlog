@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"math"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/chmenegatti/myBlog/internal/models"
 	"github.com/chmenegatti/myBlog/internal/services"
@@ -12,11 +14,12 @@ import (
 
 // Post Handler
 type PostHandler struct {
-	postService services.PostService
+	postService     services.PostService
+	markdownService services.MarkdownService
 }
 
-func NewPostHandler(postService services.PostService) *PostHandler {
-	return &PostHandler{postService: postService}
+func NewPostHandler(postService services.PostService, markdownService services.MarkdownService) *PostHandler {
+	return &PostHandler{postService: postService, markdownService: markdownService}
 }
 
 func (h *PostHandler) CreatePost(c *gin.Context) {
@@ -192,4 +195,76 @@ func (h *PostHandler) UnpublishPost(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Post unpublished successfully"})
+}
+
+// PostPreviewRequest represents a request to preview markdown content
+type PostPreviewRequest struct {
+	Content string `json:"content" binding:"required"`
+}
+
+// PostPreviewResponse represents the response with processed markdown
+type PostPreviewResponse struct {
+	HTML        string                     `json:"html"`
+	PlainText   string                     `json:"plain_text"`
+	Excerpt     string                     `json:"excerpt"`
+	WordCount   int                        `json:"word_count"`
+	ReadingTime int                        `json:"reading_time"`
+	Images      []string                   `json:"images"`
+	Headings    []services.MarkdownHeading `json:"headings"`
+}
+
+// PreviewMarkdown processes markdown content and returns preview data
+func (h *PostHandler) PreviewMarkdown(c *gin.Context) {
+	var req PostPreviewRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Validate markdown
+	if err := h.markdownService.ValidateMarkdown(req.Content); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid markdown: " + err.Error()})
+		return
+	}
+
+	// Process markdown
+	html := h.markdownService.ToSafeHTML(req.Content)
+	plainText := h.markdownService.ExtractExcerpt(req.Content, 0) // No limit for full text
+	excerpt := h.markdownService.ExtractExcerpt(req.Content, 200)
+	images := h.markdownService.ExtractImages(req.Content)
+	headings := h.markdownService.ExtractHeadings(req.Content)
+
+	// Calculate stats
+	wordCount := len(strings.Fields(plainText))
+	readingTime := calculateReadingTimeFromWordCount(wordCount)
+
+	response := PostPreviewResponse{
+		HTML:        html,
+		PlainText:   plainText,
+		Excerpt:     excerpt,
+		WordCount:   wordCount,
+		ReadingTime: readingTime,
+		Images:      images,
+		Headings:    headings,
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
+// calculateReadingTimeFromWordCount estimates reading time in minutes
+func calculateReadingTimeFromWordCount(wordCount int) int {
+	const avgWordsPerMinute = 200
+
+	if wordCount == 0 {
+		return 0
+	}
+
+	minutes := float64(wordCount) / avgWordsPerMinute
+
+	if minutes < 1 {
+		return 1
+	}
+
+	return int(math.Ceil(minutes))
 }

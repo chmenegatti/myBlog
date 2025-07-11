@@ -39,11 +39,14 @@ type Post struct {
 	Title       string         `json:"title" gorm:"not null"`
 	Slug        string         `json:"slug" gorm:"unique;not null"`
 	Excerpt     string         `json:"excerpt"`
-	Content     string         `json:"content" gorm:"type:text"`
+	Content     string         `json:"content" gorm:"type:text"`      // Raw markdown content
+	ContentHTML string         `json:"content_html" gorm:"type:text"` // Processed HTML content
 	FeaturedImg string         `json:"featured_img"`
 	Status      PostStatus     `json:"status" gorm:"default:'draft'"`
 	AuthorID    uuid.UUID      `json:"author_id" gorm:"type:uuid;not null"`
 	ViewCount   int            `json:"view_count" gorm:"default:0"`
+	ReadingTime int            `json:"reading_time" gorm:"default:0"` // Estimated reading time in minutes
+	WordCount   int            `json:"word_count" gorm:"default:0"`   // Word count of content
 	PublishedAt *time.Time     `json:"published_at"`
 	CreatedAt   time.Time      `json:"created_at"`
 	UpdatedAt   time.Time      `json:"updated_at"`

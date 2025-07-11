@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"math"
 	"strings"
 
 	"github.com/chmenegatti/myBlog/internal/models"
@@ -88,9 +89,10 @@ type PostService interface {
 }
 
 type postService struct {
-	postRepo     repositories.PostRepository
-	categoryRepo repositories.CategoryRepository
-	tagRepo      repositories.TagRepository
+	postRepo        repositories.PostRepository
+	categoryRepo    repositories.CategoryRepository
+	tagRepo         repositories.TagRepository
+	markdownService MarkdownService
 }
 
 type CreatePostRequest struct {
@@ -104,24 +106,46 @@ type CreatePostRequest struct {
 
 func NewPostService(postRepo repositories.PostRepository, categoryRepo repositories.CategoryRepository, tagRepo repositories.TagRepository) PostService {
 	return &postService{
-		postRepo:     postRepo,
-		categoryRepo: categoryRepo,
-		tagRepo:      tagRepo,
+		postRepo:        postRepo,
+		categoryRepo:    categoryRepo,
+		tagRepo:         tagRepo,
+		markdownService: NewMarkdownService(),
 	}
 }
 
 func (s *postService) Create(req *CreatePostRequest, authorID uuid.UUID) (*models.Post, error) {
+	// Validate markdown content
+	if err := s.markdownService.ValidateMarkdown(req.Content); err != nil {
+		return nil, err
+	}
+
 	// Generate slug from title
 	slug := generateSlug(req.Title)
+
+	// Process markdown content
+	contentHTML := s.markdownService.ToSafeHTML(req.Content)
+
+	// Generate excerpt if not provided
+	excerpt := req.Excerpt
+	if excerpt == "" {
+		excerpt = s.markdownService.ExtractExcerpt(req.Content, 200)
+	}
+
+	// Calculate reading time and word count
+	wordCount := s.calculateWordCount(req.Content)
+	readingTime := s.calculateReadingTime(wordCount)
 
 	post := &models.Post{
 		Title:       req.Title,
 		Slug:        slug,
 		Content:     req.Content,
-		Excerpt:     req.Excerpt,
+		ContentHTML: contentHTML,
+		Excerpt:     excerpt,
 		FeaturedImg: req.FeaturedImg,
 		AuthorID:    authorID,
 		Status:      models.StatusDraft,
+		WordCount:   wordCount,
+		ReadingTime: readingTime,
 	}
 
 	if err := s.postRepo.Create(post); err != nil {
@@ -187,6 +211,45 @@ func (s *postService) Unpublish(id uuid.UUID) error {
 func generateSlug(title string) string {
 	slug := strings.ToLower(title)
 	slug = strings.ReplaceAll(slug, " ", "-")
-	// Add more slug generation logic here
+	// Remove special characters and normalize
+	slug = strings.ReplaceAll(slug, ".", "")
+	slug = strings.ReplaceAll(slug, ",", "")
+	slug = strings.ReplaceAll(slug, "!", "")
+	slug = strings.ReplaceAll(slug, "?", "")
+	slug = strings.ReplaceAll(slug, ":", "")
+	slug = strings.ReplaceAll(slug, ";", "")
 	return slug
+}
+
+// calculateWordCount counts words in markdown content
+func (s *postService) calculateWordCount(content string) int {
+	if content == "" {
+		return 0
+	}
+
+	// Strip markdown and get plain text
+	plainText := s.markdownService.ExtractExcerpt(content, 0) // 0 means no limit
+
+	// Split by whitespace and count
+	words := strings.Fields(plainText)
+	return len(words)
+}
+
+// calculateReadingTime estimates reading time in minutes
+func (s *postService) calculateReadingTime(wordCount int) int {
+	// Average reading speed: 200 words per minute
+	const avgWordsPerMinute = 200
+
+	if wordCount == 0 {
+		return 0
+	}
+
+	minutes := float64(wordCount) / avgWordsPerMinute
+
+	// Round up to at least 1 minute
+	if minutes < 1 {
+		return 1
+	}
+
+	return int(math.Ceil(minutes))
 }

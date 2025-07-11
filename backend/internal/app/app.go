@@ -43,11 +43,12 @@ func New(cfg *config.Config) (*App, error) {
 	commentService := services.NewCommentService(commentRepo)
 	imageService := services.NewImageService(imageRepo, cfg.Upload.Path, cfg.Upload.BaseURL)
 	newsletterService := services.NewNewsletterService(newsletterRepo)
+	markdownService := services.NewMarkdownService()
 
 	// Initialize handlers
 	authHandler := handlers.NewAuthHandler(authService)
 	userHandler := handlers.NewUserHandler(userService)
-	postHandler := handlers.NewPostHandler(postService)
+	postHandler := handlers.NewPostHandler(postService, markdownService)
 	categoryHandler := handlers.NewCategoryHandler(categoryService)
 	tagHandler := handlers.NewTagHandler(tagService)
 	commentHandler := handlers.NewCommentHandler(commentService)
@@ -145,6 +146,7 @@ func setupRouter(
 				posts.DELETE("/:id", postHandler.DeletePost)
 				posts.POST("/:id/publish", postHandler.PublishPost)
 				posts.POST("/:id/unpublish", postHandler.UnpublishPost)
+				posts.POST("/preview", postHandler.PreviewMarkdown) // New markdown preview endpoint
 			}
 
 			// Categories
