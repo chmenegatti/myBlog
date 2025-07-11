@@ -28,16 +28,15 @@ type MarkdownHeading struct {
 }
 
 type markdownService struct {
-	parser    parser.Parser
-	renderer  *html.Renderer
-	sanitizer *bluemonday.Policy
+	extensions parser.Extensions
+	renderer   *html.Renderer
+	sanitizer  *bluemonday.Policy
 }
 
 // NewMarkdownService creates a new markdown service
 func NewMarkdownService() MarkdownService {
 	// Configure markdown parser with extensions
 	extensions := parser.CommonExtensions | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock
-	p := parser.NewWithExtensions(extensions)
 
 	// Configure HTML renderer
 	htmlFlags := html.CommonFlags | html.HrefTargetBlank
@@ -67,9 +66,9 @@ func NewMarkdownService() MarkdownService {
 	sanitizer.AllowAttrs("id").OnElements("h1", "h2", "h3", "h4", "h5", "h6")
 
 	return &markdownService{
-		parser:    *p,
-		renderer:  renderer,
-		sanitizer: sanitizer,
+		extensions: extensions,
+		renderer:   renderer,
+		sanitizer:  sanitizer,
 	}
 }
 
@@ -79,7 +78,9 @@ func (s *markdownService) ToHTML(markdownContent string) string {
 		return ""
 	}
 
-	doc := s.parser.Parse([]byte(markdownContent))
+	// Create a new parser for each parse operation
+	p := parser.NewWithExtensions(s.extensions)
+	doc := p.Parse([]byte(markdownContent))
 	html := markdown.Render(doc, s.renderer)
 
 	return string(html)
@@ -127,8 +128,9 @@ func (s *markdownService) ValidateMarkdown(content string) error {
 		return nil
 	}
 
-	// Try to parse the markdown
-	doc := s.parser.Parse([]byte(content))
+	// Create a new parser for validation
+	p := parser.NewWithExtensions(s.extensions)
+	doc := p.Parse([]byte(content))
 	if doc == nil {
 		return &MarkdownError{Message: "Invalid markdown content"}
 	}
