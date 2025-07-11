@@ -1,0 +1,71 @@
+    SuccessResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Operação realizada com sucesso"
+
+    Image:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        file_name:
+          type: string
+          example: "image_123456789.jpg"
+        original_name:
+          type: string
+          example: "my-photo.jpg"
+        mime_type:
+          type: string
+          example: "image/jpeg"
+        size:
+          type: integer
+          format: int64
+          example: 1024000
+        path:
+          type: string
+          example: "./uploads/general/image_123456789.jpg"
+        url:
+          type: string
+          example: "http://localhost:8080/uploads/general/image_123456789.jpg"
+        width:
+          type: integer
+          example: 1920
+        height:
+          type: integer
+          example: 1080
+        uploaded_by:
+          type: string
+          format: uuid
+        is_active:
+          type: boolean
+          example: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        uploader:
+          $ref: '#/components/schemas/User'
+
+    ImagesResponse:
+      type: object
+      properties:
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/Image'
+        total:
+          type: integer
+          example: 25
+        limit:
+          type: integer
+          example: 20
+        offset:
+          type: integer
+          example: 0
+
+paths:

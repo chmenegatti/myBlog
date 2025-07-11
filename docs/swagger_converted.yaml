@@ -1,0 +1,1376 @@
+openapi: 3.0.3
+info:
+  title: Blog Pessoal API
+  description: 'API RESTful completa para gerenciamento de blog pessoal com foco em
+    TI, arquitetura de software e Golang.
+
+
+    ## Autenticação
+
+    A API usa JWT (JSON Web Tokens) para autenticação. Inclua o token no header:
+
+    ```
+
+    Authorization: Bearer <seu-jwt-token>
+
+    ```
+
+
+    ## Características
+
+    - CRUD completo de posts
+
+    - Sistema de categorias e tags
+
+    - Sistema de comentários com moderação
+
+    - Newsletter com inscrição/cancelamento
+
+    - Autenticação e autorização
+
+    - Gestão de usuários
+
+    '
+  version: 1.0.0
+  contact:
+    name: Cesar Menegatti
+    url: https://github.com/chmenegatti
+    email: cesar@example.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+servers:
+- url: http://localhost:8080/api/v1
+  description: Servidor de desenvolvimento
+- url: https://api.yourblog.com/api/v1
+  description: Servidor de produção
+tags:
+- name: auth
+  description: Autenticação e autorização
+- name: public
+  description: Endpoints públicos
+- name: posts
+  description: Gerenciamento de posts (autenticado)
+- name: users
+  description: Gerenciamento de usuários (autenticado)
+- name: categories
+  description: Gerenciamento de categorias (autenticado)
+- name: tags
+  description: Gerenciamento de tags (autenticado)
+- name: comments
+  description: Gerenciamento de comentários (autenticado)
+- name: newsletter
+  description: Gerenciamento de newsletter (autenticado)
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        username:
+          type: string
+          example: admin
+        email:
+          type: string
+          format: email
+          example: admin@example.com
+        name:
+          type: string
+          example: Administrador
+        bio:
+          type: string
+          example: Desenvolvedor apaixonado por tecnologia
+        avatar:
+          type: string
+          example: https://example.com/avatar.jpg
+        role:
+          type: string
+          enum:
+          - admin
+          - author
+          example: author
+        is_active:
+          type: boolean
+          example: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Post:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          example: Introdução ao Go
+        slug:
+          type: string
+          example: introducao-ao-go
+        excerpt:
+          type: string
+          example: Uma introdução à linguagem Go...
+        content:
+          type: string
+          example: '# Introdução ao Go
+
+
+            Go é uma linguagem...'
+        featured_img:
+          type: string
+          example: https://example.com/image.jpg
+        status:
+          type: string
+          enum:
+          - draft
+          - published
+          - archived
+          example: published
+        author_id:
+          type: string
+          format: uuid
+        view_count:
+          type: integer
+          example: 150
+        published_at:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        author:
+          $ref: '#/components/schemas/User'
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+    Category:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: Golang
+        slug:
+          type: string
+          example: golang
+        description:
+          type: string
+          example: Posts sobre a linguagem Go
+        color:
+          type: string
+          example: '#00ADD8'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Tag:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: Tutorial
+        slug:
+          type: string
+          example: tutorial
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Comment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        post_id:
+          type: string
+          format: uuid
+        parent_id:
+          type: string
+          format: uuid
+          nullable: true
+        name:
+          type: string
+          example: João Silva
+        email:
+          type: string
+          format: email
+          example: joao@example.com
+        website:
+          type: string
+          example: https://joaosilva.dev
+        content:
+          type: string
+          example: Excelente post!
+        status:
+          type: string
+          enum:
+          - pending
+          - approved
+          - rejected
+          example: approved
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        replies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+    Newsletter:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+          example: usuario@example.com
+        is_active:
+          type: boolean
+          example: true
+        confirmed_at:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    LoginRequest:
+      type: object
+      required:
+      - email
+      - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: admin@example.com
+        password:
+          type: string
+          example: '123456'
+    RegisterRequest:
+      type: object
+      required:
+      - username
+      - email
+      - password
+      - name
+      properties:
+        username:
+          type: string
+          example: admin
+        email:
+          type: string
+          format: email
+          example: admin@example.com
+        password:
+          type: string
+          minLength: 6
+          example: '123456'
+        name:
+          type: string
+          example: Administrador
+    LoginResponse:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+    CreatePostRequest:
+      type: object
+      required:
+      - title
+      - content
+      properties:
+        title:
+          type: string
+          example: Introdução ao Go
+        content:
+          type: string
+          example: '# Introdução ao Go
+
+
+            Go é uma linguagem...'
+        excerpt:
+          type: string
+          example: Uma introdução à linguagem Go...
+        featured_img:
+          type: string
+          example: https://example.com/image.jpg
+        category_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+        tag_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+    CreateCategoryRequest:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+          example: Golang
+        description:
+          type: string
+          example: Posts sobre a linguagem Go
+        color:
+          type: string
+          example: '#00ADD8'
+    CreateTagRequest:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+          example: Tutorial
+    CreateCommentRequest:
+      type: object
+      required:
+      - post_id
+      - name
+      - email
+      - content
+      properties:
+        post_id:
+          type: string
+          format: uuid
+        parent_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: João Silva
+        email:
+          type: string
+          format: email
+          example: joao@example.com
+        website:
+          type: string
+          example: https://joaosilva.dev
+        content:
+          type: string
+          example: Excelente post!
+    PaginatedResponse:
+      type: object
+      properties:
+        total:
+          type: integer
+          example: 25
+        limit:
+          type: integer
+          example: 10
+        offset:
+          type: integer
+          example: 0
+    PostsResponse:
+      allOf:
+      - $ref: '#/components/schemas/PaginatedResponse'
+      - type: object
+        properties:
+          posts:
+            type: array
+            items:
+              $ref: '#/components/schemas/Post'
+    UsersResponse:
+      allOf:
+      - $ref: '#/components/schemas/PaginatedResponse'
+      - type: object
+        properties:
+          users:
+            type: array
+            items:
+              $ref: '#/components/schemas/User'
+    CommentsResponse:
+      allOf:
+      - $ref: '#/components/schemas/PaginatedResponse'
+      - type: object
+        properties:
+          comments:
+            type: array
+            items:
+              $ref: '#/components/schemas/Comment'
+    SubscribersResponse:
+      allOf:
+      - $ref: '#/components/schemas/PaginatedResponse'
+      - type: object
+        properties:
+          subscribers:
+            type: array
+            items:
+              $ref: '#/components/schemas/Newsletter'
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Mensagem de erro
+    SuccessResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Operação realizada com sucesso
+paths:
+  /health:
+    get:
+      summary: Health check
+      description: Verifica se a API está funcionando
+      responses:
+        '200':
+          description: API funcionando
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+  /auth/login:
+    post:
+      tags:
+      - auth
+      summary: Login de usuário
+      description: Autentica um usuário e retorna JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login realizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Credenciais inválidas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /auth/register:
+    post:
+      tags:
+      - auth
+      summary: Registro de usuário
+      description: Registra um novo usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: Usuário criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Dados inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /auth/refresh:
+    post:
+      tags:
+      - auth
+      summary: Refresh token
+      description: Renova o JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+      responses:
+        '200':
+          description: Token renovado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Token inválido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /public/posts:
+    get:
+      tags:
+      - public
+      summary: Lista posts publicados
+      description: Retorna uma lista paginada de posts publicados
+      parameters:
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          default: 10
+      - name: offset
+        in: query
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: Lista de posts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostsResponse'
+  /public/posts/{slug}:
+    get:
+      tags:
+      - public
+      summary: Busca post por slug
+      description: Retorna um post específico pelo slug
+      parameters:
+      - name: slug
+        in: path
+        required: true
+        schema:
+          type: string
+          example: introducao-ao-go
+      responses:
+        '200':
+          description: Post encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '404':
+          description: Post não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /public/categories:
+    get:
+      tags:
+      - public
+      summary: Lista categorias
+      description: Retorna todas as categorias
+      responses:
+        '200':
+          description: Lista de categorias
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+  /public/tags:
+    get:
+      tags:
+      - public
+      summary: Lista tags
+      description: Retorna todas as tags
+      responses:
+        '200':
+          description: Lista de tags
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tag'
+  /public/comments:
+    post:
+      tags:
+      - public
+      summary: Cria comentário
+      description: Cria um novo comentário em um post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCommentRequest'
+      responses:
+        '201':
+          description: Comentário criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        '400':
+          description: Dados inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /public/newsletter/subscribe:
+    post:
+      tags:
+      - public
+      summary: Inscreve na newsletter
+      description: Inscreve um email na newsletter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - email
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: usuario@example.com
+      responses:
+        '201':
+          description: Inscrição realizada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Newsletter'
+        '400':
+          description: Email inválido ou já inscrito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /public/newsletter/unsubscribe/{token}:
+    get:
+      tags:
+      - public
+      summary: Cancela inscrição na newsletter
+      description: Cancela a inscrição usando o token
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Inscrição cancelada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Token inválido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /users/me:
+    get:
+      tags:
+      - users
+      summary: Perfil do usuário atual
+      description: Retorna o perfil do usuário autenticado
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Perfil do usuário
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Não autenticado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      tags:
+      - users
+      summary: Atualiza perfil atual
+      description: Atualiza o perfil do usuário autenticado
+      security:
+      - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                bio:
+                  type: string
+                avatar:
+                  type: string
+      responses:
+        '200':
+          description: Perfil atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /users:
+    get:
+      tags:
+      - users
+      summary: Lista usuários
+      description: Retorna uma lista paginada de usuários
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          default: 10
+      - name: offset
+        in: query
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: Lista de usuários
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersResponse'
+    post:
+      tags:
+      - users
+      summary: Cria usuário
+      description: Cria um novo usuário
+      security:
+      - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - username
+              - email
+              - name
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                name:
+                  type: string
+                role:
+                  type: string
+                  enum:
+                  - admin
+                  - author
+      responses:
+        '201':
+          description: Usuário criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /users/{id}:
+    put:
+      tags:
+      - users
+      summary: Atualiza usuário
+      description: Atualiza um usuário específico
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                bio:
+                  type: string
+                avatar:
+                  type: string
+                is_active:
+                  type: boolean
+      responses:
+        '200':
+          description: Usuário atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    delete:
+      tags:
+      - users
+      summary: Deleta usuário
+      description: Deleta um usuário específico
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Usuário deletado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+  /posts:
+    get:
+      tags:
+      - posts
+      summary: Lista todos os posts
+      description: Retorna uma lista paginada de posts (incluindo rascunhos)
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          default: 10
+      - name: offset
+        in: query
+        schema:
+          type: integer
+          default: 0
+      - name: status
+        in: query
+        schema:
+          type: string
+          enum:
+          - draft
+          - published
+          - archived
+      responses:
+        '200':
+          description: Lista de posts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostsResponse'
+    post:
+      tags:
+      - posts
+      summary: Cria novo post
+      description: Cria um novo post
+      security:
+      - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePostRequest'
+      responses:
+        '201':
+          description: Post criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+  /posts/{id}:
+    get:
+      tags:
+      - posts
+      summary: Busca post por ID
+      description: Retorna um post específico pelo ID
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Post encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+    put:
+      tags:
+      - posts
+      summary: Atualiza post
+      description: Atualiza um post específico
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                content:
+                  type: string
+                excerpt:
+                  type: string
+                featured_img:
+                  type: string
+      responses:
+        '200':
+          description: Post atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+    delete:
+      tags:
+      - posts
+      summary: Deleta post
+      description: Deleta um post específico
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Post deletado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+  /posts/{id}/publish:
+    post:
+      tags:
+      - posts
+      summary: Publica post
+      description: Publica um post (muda status para published)
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Post publicado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+  /posts/{id}/unpublish:
+    post:
+      tags:
+      - posts
+      summary: Despublica post
+      description: Despublica um post (muda status para draft)
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Post despublicado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+  /categories:
+    post:
+      tags:
+      - categories
+      summary: Cria categoria
+      description: Cria uma nova categoria
+      security:
+      - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCategoryRequest'
+      responses:
+        '201':
+          description: Categoria criada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+  /categories/{id}:
+    put:
+      tags:
+      - categories
+      summary: Atualiza categoria
+      description: Atualiza uma categoria específica
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                color:
+                  type: string
+      responses:
+        '200':
+          description: Categoria atualizada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+    delete:
+      tags:
+      - categories
+      summary: Deleta categoria
+      description: Deleta uma categoria específica
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Categoria deletada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+  /tags:
+    post:
+      tags:
+      - tags
+      summary: Cria tag
+      description: Cria uma nova tag
+      security:
+      - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTagRequest'
+      responses:
+        '201':
+          description: Tag criada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+  /tags/{id}:
+    put:
+      tags:
+      - tags
+      summary: Atualiza tag
+      description: Atualiza uma tag específica
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        '200':
+          description: Tag atualizada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+    delete:
+      tags:
+      - tags
+      summary: Deleta tag
+      description: Deleta uma tag específica
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Tag deletada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+  /comments:
+    get:
+      tags:
+      - comments
+      summary: Lista comentários
+      description: Retorna uma lista paginada de comentários
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          default: 10
+      - name: offset
+        in: query
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: Lista de comentários
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentsResponse'
+  /comments/{id}:
+    put:
+      tags:
+      - comments
+      summary: Atualiza comentário
+      description: Atualiza um comentário específico
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+      responses:
+        '200':
+          description: Comentário atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+    delete:
+      tags:
+      - comments
+      summary: Deleta comentário
+      description: Deleta um comentário específico
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Comentário deletado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+  /comments/{id}/approve:
+    post:
+      tags:
+      - comments
+      summary: Aprova comentário
+      description: Aprova um comentário (muda status para approved)
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Comentário aprovado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+  /comments/{id}/reject:
+    post:
+      tags:
+      - comments
+      summary: Rejeita comentário
+      description: Rejeita um comentário (muda status para rejected)
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Comentário rejeitado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+  /newsletter/subscribers:
+    get:
+      tags:
+      - newsletter
+      summary: Lista inscritos
+      description: Retorna uma lista paginada de inscritos na newsletter
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          default: 10
+      - name: offset
+        in: query
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: Lista de inscritos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscribersResponse'
+  /newsletter/subscribers/{id}:
+    delete:
+      tags:
+      - newsletter
+      summary: Remove inscrito
+      description: Remove um inscrito da newsletter
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Inscrito removido com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'

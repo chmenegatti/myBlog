@@ -1,0 +1,361 @@
+openapi: 3.0.3
+info:
+  title: Blog Pessoal API
+  description: |
+    API RESTful completa para gerenciamento de blog pessoal com foco em TI, arquitetura de software e Golang.
+    
+    ## Autenticação
+    A API usa JWT (JSON Web Tokens) para autenticação. Inclua o token no header:
+    ```
+    Authorization: Bearer <seu-jwt-token>
+    ```
+    
+    ## Upload de Imagens
+    - Suporte para JPEG, PNG e GIF
+    - Tamanho máximo: 5MB
+    - Categorias: avatar, featured, content, general
+    - Redimensionamento automático disponível
+  version: 1.0.0
+  contact:
+    name: Cesar Menegatti
+    url: https://github.com/chmenegatti
+    email: cesar@example.com
+
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Servidor de desenvolvimento
+
+tags:
+  - name: auth
+    description: Autenticação e autorização
+  - name: images
+    description: Upload e gerenciamento de imagens
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+        email:
+          type: string
+        name:
+          type: string
+        avatar:
+          type: string
+
+    Image:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        file_name:
+          type: string
+          example: "image_123456789.jpg"
+        original_name:
+          type: string
+          example: "my-photo.jpg"
+        mime_type:
+          type: string
+          example: "image/jpeg"
+        size:
+          type: integer
+          format: int64
+          example: 1024000
+        url:
+          type: string
+          example: "http://localhost:8080/uploads/general/image_123456789.jpg"
+        width:
+          type: integer
+          example: 1920
+        height:
+          type: integer
+          example: 1080
+        uploaded_by:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+        uploader:
+          $ref: '#/components/schemas/User'
+
+    ImagesResponse:
+      type: object
+      properties:
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/Image'
+        total:
+          type: integer
+        limit:
+          type: integer
+        offset:
+          type: integer
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+
+    SuccessResponse:
+      type: object
+      properties:
+        message:
+          type: string
+
+paths:
+  # Authentication
+  /auth/login:
+    post:
+      tags: [auth]
+      summary: Login de usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Login realizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  token:
+                    type: string
+
+  # Image Upload Endpoints
+  /images/upload:
+    post:
+      tags: [images]
+      summary: Upload de imagem
+      description: Faz upload de uma imagem para o servidor
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+            enum: [avatar, featured, content, general]
+            default: general
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+                  description: Arquivo de imagem (JPEG, PNG, GIF)
+      responses:
+        '201':
+          description: Imagem enviada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Image'
+        '400':
+          description: Erro no upload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /images/avatar:
+    post:
+      tags: [images]
+      summary: Upload de avatar
+      description: Faz upload de um avatar para o usuário
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                avatar:
+                  type: string
+                  format: binary
+                  description: Arquivo de avatar (JPEG, PNG, GIF)
+      responses:
+        '201':
+          description: Avatar enviado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  avatar_url:
+                    type: string
+                  image:
+                    $ref: '#/components/schemas/Image'
+
+  /images/featured:
+    post:
+      tags: [images]
+      summary: Upload de imagem destacada
+      description: Faz upload de uma imagem destacada para posts
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                featured_image:
+                  type: string
+                  format: binary
+                  description: Arquivo de imagem destacada (JPEG, PNG, GIF)
+      responses:
+        '201':
+          description: Imagem destacada enviada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  featured_img_url:
+                    type: string
+                  image:
+                    $ref: '#/components/schemas/Image'
+
+  /images/my:
+    get:
+      tags: [images]
+      summary: Lista minhas imagens
+      description: Retorna imagens enviadas pelo usuário atual
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Lista de imagens do usuário
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImagesResponse'
+
+  /images/all:
+    get:
+      tags: [images]
+      summary: Lista todas as imagens (Admin)
+      description: Retorna todas as imagens do sistema (apenas admins)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Lista de todas as imagens
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImagesResponse'
+
+  /images/{id}:
+    get:
+      tags: [images]
+      summary: Busca imagem por ID
+      description: Retorna uma imagem específica pelo ID
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Imagem encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Image'
+        '404':
+          description: Imagem não encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags: [images]
+      summary: Deleta imagem
+      description: Remove uma imagem (apenas o proprietário)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Imagem deletada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '403':
+          description: Não autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'

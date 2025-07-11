@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Blog Pessoal API",
-    "description": "API RESTful completa para gerenciamento de blog pessoal com foco em TI, arquitetura de software e Golang.\n\n## Autenticação\nA API usa JWT (JSON Web Tokens) para autenticação. Inclua o token no header:\n```\nAuthorization: Bearer <seu-jwt-token>\n```\n\n## Características\n- CRUD completo de posts\n- Sistema de categorias e tags\n- Sistema de comentários com moderação\n- Newsletter com inscrição/cancelamento\n- Autenticação e autorização\n- Gestão de usuários\n",
+    "description": "API RESTful completa para gerenciamento de blog pessoal com foco em TI, arquitetura de software e Golang.\n\n## Autenticação\nA API usa JWT (JSON Web Tokens) para autenticação. Inclua o token no header:\n```\nAuthorization: Bearer <seu-jwt-token>\n```\n\n## Características\n- CRUD completo de posts\n- Sistema de categorias e tags\n- Sistema de comentários com moderação\n- Newsletter com inscrição/cancelamento\n- Autenticação e autorização\n- Gestão de usuários\n- Upload e gerenciamento de imagens\n\n## Upload de Imagens\n- Suporte para JPEG, PNG e GIF\n- Tamanho máximo: 5MB\n- Categorias: avatar, featured, content, general\n- Redimensionamento automático disponível\n",
     "version": "1.0.0",
     "contact": {
       "name": "Cesar Menegatti",
@@ -56,6 +56,10 @@
     {
       "name": "newsletter",
       "description": "Gerenciamento de newsletter (autenticado)"
+    },
+    {
+      "name": "images",
+      "description": "Upload e gerenciamento de imagens (autenticado)"
     }
   ],
   "components": {
@@ -118,240 +122,20 @@
           }
         }
       },
-      "Post": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "title": {
-            "type": "string",
-            "example": "Introdução ao Go"
-          },
-          "slug": {
-            "type": "string",
-            "example": "introducao-ao-go"
-          },
-          "excerpt": {
-            "type": "string",
-            "example": "Uma introdução à linguagem Go..."
-          },
-          "content": {
-            "type": "string",
-            "example": "# Introdução ao Go\n\nGo é uma linguagem..."
-          },
-          "featured_img": {
-            "type": "string",
-            "example": "https://example.com/image.jpg"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "draft",
-              "published",
-              "archived"
-            ],
-            "example": "published"
-          },
-          "author_id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "view_count": {
-            "type": "integer",
-            "example": 150
-          },
-          "published_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "author": {
-            "$ref": "#/components/schemas/User"
-          },
-          "categories": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Category"
-            }
-          },
-          "tags": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Tag"
-            }
-          }
-        }
-      },
-      "Category": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "example": "Golang"
-          },
-          "slug": {
-            "type": "string",
-            "example": "golang"
-          },
-          "description": {
-            "type": "string",
-            "example": "Posts sobre a linguagem Go"
-          },
-          "color": {
-            "type": "string",
-            "example": "#00ADD8"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "Tag": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "example": "Tutorial"
-          },
-          "slug": {
-            "type": "string",
-            "example": "tutorial"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "Comment": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "post_id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "parent_id": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "name": {
-            "type": "string",
-            "example": "João Silva"
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "example": "joao@example.com"
-          },
-          "website": {
-            "type": "string",
-            "example": "https://joaosilva.dev"
-          },
-          "content": {
-            "type": "string",
-            "example": "Excelente post!"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "pending",
-              "approved",
-              "rejected"
-            ],
-            "example": "approved"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "replies": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Comment"
-            }
-          }
-        }
-      },
-      "Newsletter": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "example": "usuario@example.com"
-          },
-          "is_active": {
-            "type": "boolean",
-            "example": true
-          },
-          "confirmed_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
       "LoginRequest": {
         "type": "object",
         "required": [
-          "email",
+          "username",
           "password"
         ],
         "properties": {
-          "email": {
+          "username": {
             "type": "string",
-            "format": "email",
-            "example": "admin@example.com"
+            "example": "admin"
           },
           "password": {
             "type": "string",
-            "example": "123456"
+            "example": "password123"
           }
         }
       },
@@ -366,27 +150,34 @@
         "properties": {
           "username": {
             "type": "string",
-            "example": "admin"
+            "example": "newuser"
           },
           "email": {
             "type": "string",
             "format": "email",
-            "example": "admin@example.com"
+            "example": "newuser@example.com"
           },
           "password": {
             "type": "string",
-            "minLength": 6,
-            "example": "123456"
+            "example": "password123"
           },
           "name": {
             "type": "string",
-            "example": "Administrador"
+            "example": "Novo Usuário"
+          },
+          "bio": {
+            "type": "string",
+            "example": "Desenvolvedor iniciante"
           }
         }
       },
-      "LoginResponse": {
+      "AuthResponse": {
         "type": "object",
         "properties": {
+          "message": {
+            "type": "string",
+            "example": "Login realizado com sucesso"
+          },
           "user": {
             "$ref": "#/components/schemas/User"
           },
@@ -396,123 +187,95 @@
           }
         }
       },
-      "CreatePostRequest": {
+      "Image": {
         "type": "object",
-        "required": [
-          "title",
-          "content"
-        ],
         "properties": {
-          "title": {
+          "id": {
             "type": "string",
-            "example": "Introdução ao Go"
+            "format": "uuid",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
           },
-          "content": {
+          "file_name": {
             "type": "string",
-            "example": "# Introdução ao Go\n\nGo é uma linguagem..."
+            "example": "image_123456789.jpg"
           },
-          "excerpt": {
+          "original_name": {
             "type": "string",
-            "example": "Uma introdução à linguagem Go..."
+            "example": "my-photo.jpg"
           },
-          "featured_img": {
+          "mime_type": {
             "type": "string",
-            "example": "https://example.com/image.jpg"
+            "example": "image/jpeg"
           },
-          "category_ids": {
+          "size": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1024000
+          },
+          "path": {
+            "type": "string",
+            "example": "./uploads/general/image_123456789.jpg"
+          },
+          "url": {
+            "type": "string",
+            "example": "http://localhost:8080/uploads/general/image_123456789.jpg"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "avatar",
+              "featured",
+              "content",
+              "general"
+            ],
+            "example": "general"
+          },
+          "width": {
+            "type": "integer",
+            "example": 1920
+          },
+          "height": {
+            "type": "integer",
+            "example": 1080
+          },
+          "uploaded_by": {
+            "type": "string",
+            "format": "uuid",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "is_active": {
+            "type": "boolean",
+            "example": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "uploader": {
+            "$ref": "#/components/schemas/User"
+          }
+        }
+      },
+      "ImagesResponse": {
+        "type": "object",
+        "properties": {
+          "images": {
             "type": "array",
             "items": {
-              "type": "string",
-              "format": "uuid"
+              "$ref": "#/components/schemas/Image"
             }
           },
-          "tag_ids": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        }
-      },
-      "CreateCategoryRequest": {
-        "type": "object",
-        "required": [
-          "name"
-        ],
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "Golang"
-          },
-          "description": {
-            "type": "string",
-            "example": "Posts sobre a linguagem Go"
-          },
-          "color": {
-            "type": "string",
-            "example": "#00ADD8"
-          }
-        }
-      },
-      "CreateTagRequest": {
-        "type": "object",
-        "required": [
-          "name"
-        ],
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "Tutorial"
-          }
-        }
-      },
-      "CreateCommentRequest": {
-        "type": "object",
-        "required": [
-          "post_id",
-          "name",
-          "email",
-          "content"
-        ],
-        "properties": {
-          "post_id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "parent_id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "example": "João Silva"
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "example": "joao@example.com"
-          },
-          "website": {
-            "type": "string",
-            "example": "https://joaosilva.dev"
-          },
-          "content": {
-            "type": "string",
-            "example": "Excelente post!"
-          }
-        }
-      },
-      "PaginatedResponse": {
-        "type": "object",
-        "properties": {
           "total": {
             "type": "integer",
             "example": 25
           },
           "limit": {
             "type": "integer",
-            "example": 10
+            "example": 20
           },
           "offset": {
             "type": "integer",
@@ -520,84 +283,16 @@
           }
         }
       },
-      "PostsResponse": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/PaginatedResponse"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "posts": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Post"
-                }
-              }
-            }
-          }
-        ]
-      },
-      "UsersResponse": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/PaginatedResponse"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "users": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
-          }
-        ]
-      },
-      "CommentsResponse": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/PaginatedResponse"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "comments": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Comment"
-                }
-              }
-            }
-          }
-        ]
-      },
-      "SubscribersResponse": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/PaginatedResponse"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "subscribers": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Newsletter"
-                }
-              }
-            }
-          }
-        ]
-      },
       "ErrorResponse": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
             "example": "Mensagem de erro"
+          },
+          "details": {
+            "type": "string",
+            "example": "Detalhes adicionais do erro"
           }
         }
       },
@@ -615,8 +310,11 @@
   "paths": {
     "/health": {
       "get": {
-        "summary": "Health check",
-        "description": "Verifica se a API está funcionando",
+        "tags": [
+          "public"
+        ],
+        "summary": "Health check da API",
+        "description": "Verifica se a API está funcionando corretamente",
         "responses": {
           "200": {
             "description": "API funcionando",
@@ -628,8 +326,63 @@
                     "status": {
                       "type": "string",
                       "example": "ok"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time"
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Registrar novo usuário",
+        "description": "Cria uma nova conta de usuário",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Usuário criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Usuário já existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -642,7 +395,7 @@
         "tags": [
           "auth"
         ],
-        "summary": "Login de usuário",
+        "summary": "Fazer login",
         "description": "Autentica um usuário e retorna JWT token",
         "requestBody": {
           "required": true,
@@ -660,7 +413,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoginResponse"
+                  "$ref": "#/components/schemas/AuthResponse"
                 }
               }
             }
@@ -678,518 +431,44 @@
         }
       }
     },
-    "/auth/register": {
+    "/images": {
       "post": {
         "tags": [
-          "auth"
+          "images"
         ],
-        "summary": "Registro de usuário",
-        "description": "Registra um novo usuário",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegisterRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Usuário criado com sucesso",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Dados inválidos",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/refresh": {
-      "post": {
-        "tags": [
-          "auth"
-        ],
-        "summary": "Refresh token",
-        "description": "Renova o JWT token",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "token": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Token renovado com sucesso",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LoginResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Token inválido",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/public/posts": {
-      "get": {
-        "tags": [
-          "public"
-        ],
-        "summary": "Lista posts publicados",
-        "description": "Retorna uma lista paginada de posts publicados",
-        "parameters": [
+        "summary": "Upload de imagem",
+        "description": "Faz upload de uma imagem com suporte a múltiplas categorias e redimensionamento automático.\n\n**Categorias disponíveis:**\n- `avatar`: Imagens de perfil (redimensionadas para 200x200px)\n- `featured`: Imagens destacadas para posts (redimensionadas para 1200x630px)\n- `content`: Imagens para conteúdo de posts (redimensionadas para 800x600px)\n- `general`: Imagens gerais (mantém tamanho original)\n",
+        "security": [
           {
-            "name": "limit",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "default": 10
-            }
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "default": 0
-            }
+            "BearerAuth": []
           }
         ],
-        "responses": {
-          "200": {
-            "description": "Lista de posts",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PostsResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/public/posts/{slug}": {
-      "get": {
-        "tags": [
-          "public"
-        ],
-        "summary": "Busca post por slug",
-        "description": "Retorna um post específico pelo slug",
-        "parameters": [
-          {
-            "name": "slug",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "introducao-ao-go"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Post encontrado",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Post"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Post não encontrado",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/public/categories": {
-      "get": {
-        "tags": [
-          "public"
-        ],
-        "summary": "Lista categorias",
-        "description": "Retorna todas as categorias",
-        "responses": {
-          "200": {
-            "description": "Lista de categorias",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Category"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/public/tags": {
-      "get": {
-        "tags": [
-          "public"
-        ],
-        "summary": "Lista tags",
-        "description": "Retorna todas as tags",
-        "responses": {
-          "200": {
-            "description": "Lista de tags",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Tag"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/public/comments": {
-      "post": {
-        "tags": [
-          "public"
-        ],
-        "summary": "Cria comentário",
-        "description": "Cria um novo comentário em um post",
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateCommentRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Comentário criado com sucesso",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Comment"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Dados inválidos",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/public/newsletter/subscribe": {
-      "post": {
-        "tags": [
-          "public"
-        ],
-        "summary": "Inscreve na newsletter",
-        "description": "Inscreve um email na newsletter",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
                 "type": "object",
                 "required": [
-                  "email"
+                  "file",
+                  "category"
                 ],
                 "properties": {
-                  "email": {
+                  "file": {
                     "type": "string",
-                    "format": "email",
-                    "example": "usuario@example.com"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Inscrição realizada com sucesso",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Newsletter"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Email inválido ou já inscrito",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/public/newsletter/unsubscribe/{token}": {
-      "get": {
-        "tags": [
-          "public"
-        ],
-        "summary": "Cancela inscrição na newsletter",
-        "description": "Cancela a inscrição usando o token",
-        "parameters": [
-          {
-            "name": "token",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Inscrição cancelada com sucesso",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Token inválido",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/users/me": {
-      "get": {
-        "tags": [
-          "users"
-        ],
-        "summary": "Perfil do usuário atual",
-        "description": "Retorna o perfil do usuário autenticado",
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Perfil do usuário",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Não autenticado",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "users"
-        ],
-        "summary": "Atualiza perfil atual",
-        "description": "Atualiza o perfil do usuário autenticado",
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
+                    "format": "binary",
+                    "description": "Arquivo de imagem (JPEG, PNG, GIF)"
                   },
-                  "bio": {
-                    "type": "string"
-                  },
-                  "avatar": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Perfil atualizado com sucesso",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/users": {
-      "get": {
-        "tags": [
-          "users"
-        ],
-        "summary": "Lista usuários",
-        "description": "Retorna uma lista paginada de usuários",
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "default": 10
-            }
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "default": 0
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Lista de usuários",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UsersResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "users"
-        ],
-        "summary": "Cria usuário",
-        "description": "Cria um novo usuário",
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "username",
-                  "email",
-                  "name"
-                ],
-                "properties": {
-                  "username": {
-                    "type": "string"
-                  },
-                  "email": {
-                    "type": "string",
-                    "format": "email"
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "role": {
+                  "category": {
                     "type": "string",
                     "enum": [
-                      "admin",
-                      "author"
-                    ]
+                      "avatar",
+                      "featured",
+                      "content",
+                      "general"
+                    ],
+                    "description": "Categoria da imagem",
+                    "example": "general"
                   }
                 }
               }
@@ -1198,121 +477,72 @@
         },
         "responses": {
           "201": {
-            "description": "Usuário criado com sucesso",
+            "description": "Imagem enviada com sucesso",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/users/{id}": {
-      "put": {
-        "tags": [
-          "users"
-        ],
-        "summary": "Atualiza usuário",
-        "description": "Atualiza um usuário específico",
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "bio": {
-                    "type": "string"
-                  },
-                  "avatar": {
-                    "type": "string"
-                  },
-                  "is_active": {
-                    "type": "boolean"
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Imagem enviada com sucesso"
+                    },
+                    "image": {
+                      "$ref": "#/components/schemas/Image"
+                    }
                   }
                 }
               }
             }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Usuário atualizado com sucesso",
+          },
+          "400": {
+            "description": "Erro de validação (arquivo inválido, tamanho excedido, etc.)",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/User"
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token de autenticação inválido ou ausente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Arquivo muito grande",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Tipo de arquivo não suportado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
           }
         }
       },
-      "delete": {
-        "tags": [
-          "users"
-        ],
-        "summary": "Deleta usuário",
-        "description": "Deleta um usuário específico",
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Usuário deletado com sucesso",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/posts": {
       "get": {
         "tags": [
-          "posts"
+          "images"
         ],
-        "summary": "Lista todos os posts",
-        "description": "Retorna uma lista paginada de posts (incluindo rascunhos)",
+        "summary": "Listar imagens",
+        "description": "Lista todas as imagens do usuário autenticado com paginação",
         "security": [
           {
             "BearerAuth": []
@@ -1322,574 +552,56 @@
           {
             "name": "limit",
             "in": "query",
+            "description": "Número máximo de imagens a retornar",
             "schema": {
               "type": "integer",
-              "default": 10
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
             }
           },
           {
             "name": "offset",
             "in": "query",
+            "description": "Número de imagens a pular para paginação",
             "schema": {
               "type": "integer",
+              "minimum": 0,
               "default": 0
             }
           },
           {
-            "name": "status",
+            "name": "category",
             "in": "query",
+            "description": "Filtrar por categoria",
             "schema": {
               "type": "string",
               "enum": [
-                "draft",
-                "published",
-                "archived"
+                "avatar",
+                "featured",
+                "content",
+                "general"
               ]
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Lista de posts",
+            "description": "Lista de imagens retornada com sucesso",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PostsResponse"
+                  "$ref": "#/components/schemas/ImagesResponse"
                 }
               }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "posts"
-        ],
-        "summary": "Cria novo post",
-        "description": "Cria um novo post",
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreatePostRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Post criado com sucesso",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Post"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/posts/{id}": {
-      "get": {
-        "tags": [
-          "posts"
-        ],
-        "summary": "Busca post por ID",
-        "description": "Retorna um post específico pelo ID",
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Post encontrado",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Post"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "posts"
-        ],
-        "summary": "Atualiza post",
-        "description": "Atualiza um post específico",
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "title": {
-                    "type": "string"
-                  },
-                  "content": {
-                    "type": "string"
-                  },
-                  "excerpt": {
-                    "type": "string"
-                  },
-                  "featured_img": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Post atualizado com sucesso",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Post"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "posts"
-        ],
-        "summary": "Deleta post",
-        "description": "Deleta um post específico",
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Post deletado com sucesso",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/posts/{id}/publish": {
-      "post": {
-        "tags": [
-          "posts"
-        ],
-        "summary": "Publica post",
-        "description": "Publica um post (muda status para published)",
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Post publicado com sucesso",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/posts/{id}/unpublish": {
-      "post": {
-        "tags": [
-          "posts"
-        ],
-        "summary": "Despublica post",
-        "description": "Despublica um post (muda status para draft)",
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Post despublicado com sucesso",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/categories": {
-      "post": {
-        "tags": [
-          "categories"
-        ],
-        "summary": "Cria categoria",
-        "description": "Cria uma nova categoria",
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateCategoryRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Categoria criada com sucesso",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Category"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/categories/{id}": {
-      "put": {
-        "tags": [
-          "categories"
-        ],
-        "summary": "Atualiza categoria",
-        "description": "Atualiza uma categoria específica",
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "description": {
-                    "type": "string"
-                  },
-                  "color": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Categoria atualizada com sucesso",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Category"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "categories"
-        ],
-        "summary": "Deleta categoria",
-        "description": "Deleta uma categoria específica",
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Categoria deletada com sucesso",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/tags": {
-      "post": {
-        "tags": [
-          "tags"
-        ],
-        "summary": "Cria tag",
-        "description": "Cria uma nova tag",
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateTagRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Tag criada com sucesso",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Tag"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/tags/{id}": {
-      "put": {
-        "tags": [
-          "tags"
-        ],
-        "summary": "Atualiza tag",
-        "description": "Atualiza uma tag específica",
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Tag atualizada com sucesso",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Tag"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "tags"
-        ],
-        "summary": "Deleta tag",
-        "description": "Deleta uma tag específica",
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tag deletada com sucesso",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/comments": {
-      "get": {
-        "tags": [
-          "comments"
-        ],
-        "summary": "Lista comentários",
-        "description": "Retorna uma lista paginada de comentários",
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "default": 10
             }
           },
-          {
-            "name": "offset",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "default": 0
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Lista de comentários",
+          "401": {
+            "description": "Token de autenticação inválido ou ausente",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CommentsResponse"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -1897,13 +609,13 @@
         }
       }
     },
-    "/comments/{id}": {
-      "put": {
+    "/images/{id}": {
+      "get": {
         "tags": [
-          "comments"
+          "images"
         ],
-        "summary": "Atualiza comentário",
-        "description": "Atualiza um comentário específico",
+        "summary": "Buscar imagem por ID",
+        "description": "Retorna os detalhes de uma imagem específica",
         "security": [
           {
             "BearerAuth": []
@@ -1912,36 +624,42 @@
         "parameters": [
           {
             "name": "id",
-            "in": "path",
             "required": true,
+            "in": "path",
+            "description": "ID da imagem",
             "schema": {
               "type": "string",
               "format": "uuid"
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "content": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
-            "description": "Comentário atualizado com sucesso",
+            "description": "Imagem encontrada",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Comment"
+                  "$ref": "#/components/schemas/Image"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token de autenticação inválido ou ausente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Imagem não encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -1950,10 +668,10 @@
       },
       "delete": {
         "tags": [
-          "comments"
+          "images"
         ],
-        "summary": "Deleta comentário",
-        "description": "Deleta um comentário específico",
+        "summary": "Remover imagem",
+        "description": "Remove uma imagem do sistema (apenas o usuário que fez upload pode remover)",
         "security": [
           {
             "BearerAuth": []
@@ -1964,6 +682,7 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "description": "ID da imagem",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -1972,129 +691,41 @@
         ],
         "responses": {
           "200": {
-            "description": "Comentário deletado com sucesso",
+            "description": "Imagem removida com sucesso",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/SuccessResponse"
                 }
               }
-            }
-          }
-        }
-      }
-    },
-    "/comments/{id}/approve": {
-      "post": {
-        "tags": [
-          "comments"
-        ],
-        "summary": "Aprova comentário",
-        "description": "Aprova um comentário (muda status para approved)",
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Comentário aprovado com sucesso",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/comments/{id}/reject": {
-      "post": {
-        "tags": [
-          "comments"
-        ],
-        "summary": "Rejeita comentário",
-        "description": "Rejeita um comentário (muda status para rejected)",
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Comentário rejeitado com sucesso",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/newsletter/subscribers": {
-      "get": {
-        "tags": [
-          "newsletter"
-        ],
-        "summary": "Lista inscritos",
-        "description": "Retorna uma lista paginada de inscritos na newsletter",
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "default": 10
             }
           },
-          {
-            "name": "offset",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "default": 0
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Lista de inscritos",
+          "401": {
+            "description": "Token de autenticação inválido ou ausente",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubscribersResponse"
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para remover esta imagem",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Imagem não encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -2102,36 +733,149 @@
         }
       }
     },
-    "/newsletter/subscribers/{id}": {
-      "delete": {
+    "/images/avatar": {
+      "post": {
         "tags": [
-          "newsletter"
+          "images"
         ],
-        "summary": "Remove inscrito",
-        "description": "Remove um inscrito da newsletter",
+        "summary": "Upload de avatar",
+        "description": "Upload específico para imagem de avatar do usuário.\nA imagem será automaticamente redimensionada para 200x200px.\n",
         "security": [
           {
             "BearerAuth": []
           }
         ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "file"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Arquivo de imagem para avatar (JPEG, PNG, GIF)"
+                  }
+                }
+              }
             }
           }
-        ],
+        },
         "responses": {
-          "200": {
-            "description": "Inscrito removido com sucesso",
+          "201": {
+            "description": "Avatar enviado com sucesso",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SuccessResponse"
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Avatar enviado com sucesso"
+                    },
+                    "image": {
+                      "$ref": "#/components/schemas/Image"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token de autenticação inválido ou ausente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/images/featured": {
+      "post": {
+        "tags": [
+          "images"
+        ],
+        "summary": "Upload de imagem destacada",
+        "description": "Upload específico para imagem destacada de posts.\nA imagem será automaticamente redimensionada para 1200x630px.\n",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "file"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Arquivo de imagem destacada (JPEG, PNG, GIF)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Imagem destacada enviada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Imagem destacada enviada com sucesso"
+                    },
+                    "image": {
+                      "$ref": "#/components/schemas/Image"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token de autenticação inválido ou ausente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }

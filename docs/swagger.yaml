@@ -1,0 +1,592 @@
+openapi: 3.0.3
+info:
+  title: Blog Pessoal API
+  description: |
+    API RESTful completa para gerenciamento de blog pessoal com foco em TI, arquitetura de software e Golang.
+
+    ## Autenticação
+    A API usa JWT (JSON Web Tokens) para autenticação. Inclua o token no header:
+    ```
+    Authorization: Bearer <seu-jwt-token>
+    ```
+
+    ## Características
+    - CRUD completo de posts
+    - Sistema de categorias e tags
+    - Sistema de comentários com moderação
+    - Newsletter com inscrição/cancelamento
+    - Autenticação e autorização
+    - Gestão de usuários
+    - Upload e gerenciamento de imagens
+
+    ## Upload de Imagens
+    - Suporte para JPEG, PNG e GIF
+    - Tamanho máximo: 5MB
+    - Categorias: avatar, featured, content, general
+    - Redimensionamento automático disponível
+  version: 1.0.0
+  contact:
+    name: Cesar Menegatti
+    url: https://github.com/chmenegatti
+    email: cesar@example.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Servidor de desenvolvimento
+  - url: https://api.yourblog.com/api/v1
+    description: Servidor de produção
+
+tags:
+  - name: auth
+    description: Autenticação e autorização
+  - name: public
+    description: Endpoints públicos
+  - name: posts
+    description: Gerenciamento de posts (autenticado)
+  - name: users
+    description: Gerenciamento de usuários (autenticado)
+  - name: categories
+    description: Gerenciamento de categorias (autenticado)
+  - name: tags
+    description: Gerenciamento de tags (autenticado)
+  - name: comments
+    description: Gerenciamento de comentários (autenticado)
+  - name: newsletter
+    description: Gerenciamento de newsletter (autenticado)
+  - name: images
+    description: Upload e gerenciamento de imagens (autenticado)
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        username:
+          type: string
+          example: "admin"
+        email:
+          type: string
+          format: email
+          example: "admin@example.com"
+        name:
+          type: string
+          example: "Administrador"
+        bio:
+          type: string
+          example: "Desenvolvedor apaixonado por tecnologia"
+        avatar:
+          type: string
+          example: "https://example.com/avatar.jpg"
+        role:
+          type: string
+          enum: [admin, author]
+          example: "author"
+        is_active:
+          type: boolean
+          example: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    LoginRequest:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+          example: "admin"
+        password:
+          type: string
+          example: "password123"
+
+    RegisterRequest:
+      type: object
+      required: [username, email, password, name]
+      properties:
+        username:
+          type: string
+          example: "newuser"
+        email:
+          type: string
+          format: email
+          example: "newuser@example.com"
+        password:
+          type: string
+          example: "password123"
+        name:
+          type: string
+          example: "Novo Usuário"
+        bio:
+          type: string
+          example: "Desenvolvedor iniciante"
+
+    AuthResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Login realizado com sucesso"
+        user:
+          $ref: '#/components/schemas/User'
+        token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+    Image:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        file_name:
+          type: string
+          example: "image_123456789.jpg"
+        original_name:
+          type: string
+          example: "my-photo.jpg"
+        mime_type:
+          type: string
+          example: "image/jpeg"
+        size:
+          type: integer
+          format: int64
+          example: 1024000
+        path:
+          type: string
+          example: "./uploads/general/image_123456789.jpg"
+        url:
+          type: string
+          example: "http://localhost:8080/uploads/general/image_123456789.jpg"
+        category:
+          type: string
+          enum: [avatar, featured, content, general]
+          example: "general"
+        width:
+          type: integer
+          example: 1920
+        height:
+          type: integer
+          example: 1080
+        uploaded_by:
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        is_active:
+          type: boolean
+          example: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        uploader:
+          $ref: '#/components/schemas/User'
+
+    ImagesResponse:
+      type: object
+      properties:
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/Image'
+        total:
+          type: integer
+          example: 25
+        limit:
+          type: integer
+          example: 20
+        offset:
+          type: integer
+          example: 0
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Mensagem de erro"
+        details:
+          type: string
+          example: "Detalhes adicionais do erro"
+
+    SuccessResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Operação realizada com sucesso"
+
+paths:
+  /health:
+    get:
+      tags: [public]
+      summary: Health check da API
+      description: Verifica se a API está funcionando corretamente
+      responses:
+        '200':
+          description: API funcionando
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "ok"
+                  timestamp:
+                    type: string
+                    format: date-time
+
+  /auth/register:
+    post:
+      tags: [auth]
+      summary: Registrar novo usuário
+      description: Cria uma nova conta de usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: Usuário criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Usuário já existe
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/login:
+    post:
+      tags: [auth]
+      summary: Fazer login
+      description: Autentica um usuário e retorna JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login realizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Credenciais inválidas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /images:
+    post:
+      tags: [images]
+      summary: Upload de imagem
+      description: |
+        Faz upload de uma imagem com suporte a múltiplas categorias e redimensionamento automático.
+        
+        **Categorias disponíveis:**
+        - `avatar`: Imagens de perfil (redimensionadas para 200x200px)
+        - `featured`: Imagens destacadas para posts (redimensionadas para 1200x630px)
+        - `content`: Imagens para conteúdo de posts (redimensionadas para 800x600px)
+        - `general`: Imagens gerais (mantém tamanho original)
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: !!bool true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file, category]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: "Arquivo de imagem (JPEG, PNG, GIF)"
+                category:
+                  type: string
+                  enum: [avatar, featured, content, general]
+                  description: "Categoria da imagem"
+                  example: "general"
+      responses:
+        '201':
+          description: Imagem enviada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Imagem enviada com sucesso"
+                  image:
+                    $ref: '#/components/schemas/Image'
+        '400':
+          description: Erro de validação (arquivo inválido, tamanho excedido, etc.)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Token de autenticação inválido ou ausente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '413':
+          description: Arquivo muito grande
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '415':
+          description: Tipo de arquivo não suportado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    get:
+      tags: [images]
+      summary: Listar imagens
+      description: Lista todas as imagens do usuário autenticado com paginação
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          description: Número máximo de imagens a retornar
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: offset
+          in: query
+          description: Número de imagens a pular para paginação
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: category
+          in: query
+          description: Filtrar por categoria
+          schema:
+            type: string
+            enum: [avatar, featured, content, general]
+      responses:
+        '200':
+          description: Lista de imagens retornada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImagesResponse'
+        '401':
+          description: Token de autenticação inválido ou ausente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /images/{id}:
+    get:
+      tags: [images]
+      summary: Buscar imagem por ID
+      description: Retorna os detalhes de uma imagem específica
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: ID da imagem
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Imagem encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Image'
+        '401':
+          description: Token de autenticação inválido ou ausente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Imagem não encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      tags: [images]
+      summary: Remover imagem
+      description: Remove uma imagem do sistema (apenas o usuário que fez upload pode remover)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID da imagem
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Imagem removida com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '401':
+          description: Token de autenticação inválido ou ausente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Sem permissão para remover esta imagem
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Imagem não encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /images/avatar:
+    post:
+      tags: [images]
+      summary: Upload de avatar
+      description: |
+        Upload específico para imagem de avatar do usuário.
+        A imagem será automaticamente redimensionada para 200x200px.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: "Arquivo de imagem para avatar (JPEG, PNG, GIF)"
+      responses:
+        '201':
+          description: Avatar enviado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Avatar enviado com sucesso"
+                  image:
+                    $ref: '#/components/schemas/Image'
+        '400':
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Token de autenticação inválido ou ausente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /images/featured:
+    post:
+      tags: [images]
+      summary: Upload de imagem destacada
+      description: |
+        Upload específico para imagem destacada de posts.
+        A imagem será automaticamente redimensionada para 1200x630px.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: "Arquivo de imagem destacada (JPEG, PNG, GIF)"
+      responses:
+        '201':
+          description: Imagem destacada enviada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Imagem destacada enviada com sucesso"
+                  image:
+                    $ref: '#/components/schemas/Image'
+        '400':
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Token de autenticação inválido ou ausente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
