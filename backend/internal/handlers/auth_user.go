@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/chmenegatti/myBlog/internal/middleware"
 	"github.com/chmenegatti/myBlog/internal/services"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -25,16 +26,19 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
+		middleware.LogAuthAttempt(req.Email, "login", false, "invalid_request_format")
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	response, err := h.authService.Login(req.Email, req.Password)
 	if err != nil {
+		middleware.LogAuthAttempt(req.Email, "login", false, err.Error())
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
+	middleware.LogAuthAttempt(req.Email, "login", true, "")
 	c.JSON(http.StatusOK, response)
 }
 
@@ -42,16 +46,23 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	var req services.RegisterRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
+		middleware.LogAuthAttempt(req.Email, "register", false, "invalid_request_format")
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	user, err := h.authService.Register(&req)
 	if err != nil {
+		middleware.LogAuthAttempt(req.Email, "register", false, err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
+	middleware.LogAuthAttempt(req.Email, "register", true, "")
+	middleware.LogBusinessOperation("user_registration", user.ID.String(), map[string]any{
+		"email": req.Email,
+		"name":  req.Name,
+	})
 	c.JSON(http.StatusCreated, user)
 }
 

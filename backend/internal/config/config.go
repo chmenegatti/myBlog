@@ -14,6 +14,7 @@ type Config struct {
 	JWT      JWTConfig
 	CORS     CORSConfig
 	Upload   UploadConfig
+	Logging  LoggingConfig
 }
 
 type ServerConfig struct {
@@ -39,6 +40,12 @@ type UploadConfig struct {
 	Path    string
 	BaseURL string
 	MaxSize int64 // in bytes
+}
+
+type LoggingConfig struct {
+	Level  string // DEBUG, INFO, WARN, ERROR
+	Format string // json, text, emoji
+	Output string // console, file, file-rotate (comma-separated)
 }
 
 type CORSConfig struct {
@@ -79,6 +86,11 @@ func Load() (*Config, error) {
 			Path:    getEnv("UPLOAD_PATH", "./uploads"),
 			BaseURL: getEnv("UPLOAD_BASE_URL", "http://localhost:8080"),
 			MaxSize: getEnvAsInt64("UPLOAD_MAX_SIZE", 5<<20), // 5MB default
+		},
+		Logging: LoggingConfig{
+			Level:  getEnv("LOG_LEVEL", "INFO"),
+			Format: getEnv("LOG_FORMAT", "auto"),
+			Output: getEnv("LOG_OUTPUT", "console"),
 		},
 	}
 

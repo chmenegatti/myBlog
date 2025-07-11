@@ -1,6 +1,8 @@
 package app
 
 import (
+	"time"
+
 	"github.com/chmenegatti/myBlog/internal/config"
 	"github.com/chmenegatti/myBlog/internal/database"
 	"github.com/chmenegatti/myBlog/internal/handlers"
@@ -85,8 +87,10 @@ func setupRouter(
 
 	// Middleware
 	router.Use(middleware.CORS(cfg.CORS))
-	router.Use(middleware.Logger())
-	router.Use(gin.Recovery())
+	router.Use(middleware.RequestLogger())
+	router.Use(middleware.ErrorLogger())
+	router.Use(middleware.Recovery())
+	router.Use(middleware.PerformanceLogger(time.Second * 5)) // Log requests that take more than 5 seconds
 
 	// Health check
 	router.GET("/health", func(c *gin.Context) {
