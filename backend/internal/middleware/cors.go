@@ -23,8 +23,14 @@ func CORS(cfg config.CORSConfig) gin.HandlerFunc {
 			}
 		}
 
+		// Set CORS headers
 		if allowed {
 			c.Header("Access-Control-Allow-Origin", origin)
+		} else {
+			// For development, allow localhost variations
+			if strings.Contains(origin, "localhost") || strings.Contains(origin, "127.0.0.1") {
+				c.Header("Access-Control-Allow-Origin", origin)
+			}
 		}
 
 		c.Header("Access-Control-Allow-Methods", strings.Join(cfg.AllowedMethods, ", "))
@@ -33,6 +39,7 @@ func CORS(cfg config.CORSConfig) gin.HandlerFunc {
 		c.Header("Access-Control-Allow-Credentials", "true")
 		c.Header("Access-Control-Max-Age", "86400")
 
+		// Handle preflight requests
 		if c.Request.Method == "OPTIONS" {
 			c.AbortWithStatus(http.StatusNoContent)
 			return

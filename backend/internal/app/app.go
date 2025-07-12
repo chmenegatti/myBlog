@@ -130,8 +130,8 @@ func setupRouter(
 			{
 				users.GET("/me", userHandler.GetCurrentUser)
 				users.PUT("/me", userHandler.UpdateCurrentUser)
-				users.GET("/", userHandler.GetUsers)
-				users.POST("/", userHandler.CreateUser)
+				users.GET("", userHandler.GetUsers)
+				users.POST("", userHandler.CreateUser)
 				users.PUT("/:id", userHandler.UpdateUser)
 				users.DELETE("/:id", userHandler.DeleteUser)
 			}
@@ -139,8 +139,8 @@ func setupRouter(
 			// Posts
 			posts := protected.Group("/posts")
 			{
-				posts.GET("/", postHandler.GetPosts)
-				posts.POST("/", postHandler.CreatePost)
+				posts.GET("", postHandler.GetPosts)
+				posts.POST("", postHandler.CreatePost)
 				posts.GET("/:id", postHandler.GetPost)
 				posts.PUT("/:id", postHandler.UpdatePost)
 				posts.DELETE("/:id", postHandler.DeletePost)
@@ -152,7 +152,7 @@ func setupRouter(
 			// Categories
 			categories := protected.Group("/categories")
 			{
-				categories.POST("/", categoryHandler.CreateCategory)
+				categories.POST("", categoryHandler.CreateCategory)
 				categories.PUT("/:id", categoryHandler.UpdateCategory)
 				categories.DELETE("/:id", categoryHandler.DeleteCategory)
 			}
@@ -160,7 +160,7 @@ func setupRouter(
 			// Tags
 			tags := protected.Group("/tags")
 			{
-				tags.POST("/", tagHandler.CreateTag)
+				tags.POST("", tagHandler.CreateTag)
 				tags.PUT("/:id", tagHandler.UpdateTag)
 				tags.DELETE("/:id", tagHandler.DeleteTag)
 			}
@@ -168,7 +168,7 @@ func setupRouter(
 			// Comments
 			comments := protected.Group("/comments")
 			{
-				comments.GET("/", commentHandler.GetComments)
+				comments.GET("", commentHandler.GetComments)
 				comments.PUT("/:id", commentHandler.UpdateComment)
 				comments.DELETE("/:id", commentHandler.DeleteComment)
 				comments.POST("/:id/approve", commentHandler.ApproveComment)

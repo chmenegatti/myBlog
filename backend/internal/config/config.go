@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/joho/godotenv"
 )
@@ -78,9 +79,9 @@ func Load() (*Config, error) {
 			Expiration: getEnvAsInt("JWT_EXPIRATION", 24),
 		},
 		CORS: CORSConfig{
-			AllowedOrigins: []string{"http://localhost:3000", "http://localhost:5173", "http://localhost:5174"},
-			AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-			AllowedHeaders: []string{"Content-Type", "Authorization"},
+			AllowedOrigins: strings.Split(getEnv("CORS_ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:5173,http://localhost:5174"), ","),
+			AllowedMethods: strings.Split(getEnv("CORS_ALLOWED_METHODS", "GET,POST,PUT,DELETE,OPTIONS"), ","),
+			AllowedHeaders: strings.Split(getEnv("CORS_ALLOWED_HEADERS", "Content-Type,Authorization,X-Requested-With"), ","),
 		},
 		Upload: UploadConfig{
 			Path:    getEnv("UPLOAD_PATH", "./uploads"),
