@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Frontend CORS</title>
+</head>
+<body>
+    <h1>Test Frontend CORS</h1>
+    <button onclick="testLogin()">Test Login</button>
+    <button onclick="testCreatePost()">Test Create Post</button>
+    <div id="result"></div>
+
+    <script>
+        let authToken = null;
+        
+        async function testLogin() {
+            try {
+                const response = await fetch('http://localhost:8080/api/v1/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: 'admin@example.com',
+                        password: '123456'
+                    })
+                });
+                
+                const data = await response.json();
+                authToken = data.token;
+                document.getElementById('result').innerHTML = `<p>Login successful! Token: ${authToken.substring(0, 50)}...</p>`;
+            } catch (error) {
+                document.getElementById('result').innerHTML = `<p>Login error: ${error.message}</p>`;
+                console.error('Login error:', error);
+            }
+        }
+        
+        async function testCreatePost() {
+            if (!authToken) {
+                document.getElementById('result').innerHTML = '<p>Please login first!</p>';
+                return;
+            }
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/v1/posts/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({
+                        title: 'Test Post from Frontend',
+                        content: '# Test Content\n\nThis is a test post from frontend.',
+                        excerpt: 'Test excerpt from frontend',
+                        status: 'draft'
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('result').innerHTML = `<p>Post created successfully! ID: ${data.id}</p>`;
+                } else {
+                    const errorData = await response.json();
+                    document.getElementById('result').innerHTML = `<p>Post creation failed: ${errorData.error || response.statusText}</p>`;
+                }
+            } catch (error) {
+                document.getElementById('result').innerHTML = `<p>Post creation error: ${error.message}</p>`;
+                console.error('Post creation error:', error);
+            }
+        }
+    </script>
+</body>
+</html>
