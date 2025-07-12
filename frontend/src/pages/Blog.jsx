@@ -3,7 +3,6 @@ import {
   Container,
   Typography,
   Box,
-  Grid,
   Pagination,
   CircularProgress,
   Alert,
@@ -116,9 +115,9 @@ const Blog = () => {
         />
       </Helmet>
 
-      <Container maxWidth="xl" sx={{ py: 4 }}>
+      <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 3, md: 4 } }}>
         {/* Header */}
-        <Box sx={{ textAlign: 'center', mb: 6 }}>
+        <Box sx={{ textAlign: 'center', mb: { xs: 4, sm: 5, md: 6 } }}>
           <Typography
             variant="h2"
             sx={{
@@ -128,6 +127,7 @@ const Blog = () => {
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
+              fontSize: { xs: '1.75rem', sm: '2.5rem', md: '3rem' },
             }}
           >
             Blog
@@ -139,6 +139,8 @@ const Blog = () => {
               maxWidth: 600,
               mx: 'auto',
               lineHeight: 1.5,
+              fontSize: { xs: '0.9rem', sm: '1rem', md: '1.25rem' },
+              px: { xs: 2, sm: 0 },
             }}
           >
             Explore our latest insights on technology, design, and innovation
@@ -149,9 +151,9 @@ const Blog = () => {
         <Box
           sx={{
             display: 'flex',
-            gap: 2,
-            mb: 4,
-            flexDirection: { xs: 'column', md: 'row' },
+            gap: { xs: 2, sm: 2 },
+            mb: { xs: 3, sm: 4 },
+            flexDirection: { xs: 'column', sm: 'column', md: 'row' },
             alignItems: { md: 'center' },
           }}
         >
@@ -159,7 +161,13 @@ const Blog = () => {
             placeholder="Search posts..."
             value={searchTerm}
             onChange={handleSearchChange}
-            sx={{ flex: 1, maxWidth: { md: 400 } }}
+            sx={{
+              flex: 1,
+              maxWidth: { md: 400 },
+              '& .MuiOutlinedInput-root': {
+                fontSize: { xs: '0.9rem', sm: '1rem' },
+              },
+            }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -169,12 +177,17 @@ const Blog = () => {
             }}
           />
 
-          <FormControl sx={{ minWidth: 200 }}>
+          <FormControl sx={{ minWidth: { xs: '100%', sm: '100%', md: 200 } }}>
             <InputLabel>Category</InputLabel>
             <Select
               value={selectedCategory}
               label="Category"
               onChange={handleCategoryChange}
+              sx={{
+                '& .MuiSelect-select': {
+                  fontSize: { xs: '0.9rem', sm: '1rem' },
+                },
+              }}
             >
               <MenuItem value="">All Categories</MenuItem>
               {categories.map(category => (
@@ -235,13 +248,23 @@ const Blog = () => {
               </Box>
             ) : (
               <>
-                <Grid container spacing={3} sx={{ mb: 6 }}>
+                <Box
+                  sx={{
+                    display: 'grid',
+                    gridTemplateColumns: {
+                      xs: '1fr',
+                      sm: 'repeat(2, 1fr)',
+                      md: 'repeat(3, 1fr)',
+                      lg: 'repeat(4, 1fr)',
+                    },
+                    gap: { xs: 2, sm: 3 },
+                    mb: { xs: 4, sm: 5, md: 6 },
+                  }}
+                >
                   {posts.map(post => (
-                    <Grid item xs={12} sm={6} lg={4} key={post.id}>
-                      <PostCard post={post} />
-                    </Grid>
+                    <PostCard key={post.id} post={post} />
                   ))}
-                </Grid>
+                </Box>
 
                 {/* Pagination */}
                 {totalPages > 1 && (

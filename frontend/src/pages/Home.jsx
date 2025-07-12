@@ -3,10 +3,10 @@ import {
   Container,
   Typography,
   Box,
-  Grid,
   Button,
   CircularProgress,
   Alert,
+  Grid,
 } from '@mui/material';
 import { ArrowForward } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
@@ -79,13 +79,13 @@ const Home = () => {
         />
       </Helmet>
 
-      <Container maxWidth="xl" sx={{ py: 4 }}>
+      <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 3, md: 4 } }}>
         {/* Hero Section */}
-        <Box sx={{ textAlign: 'center', mb: 8 }}>
+        <Box sx={{ textAlign: 'center', mb: { xs: 4, sm: 6, md: 8 } }}>
           <Typography
             variant="h1"
             sx={{
-              fontSize: { xs: '2.5rem', md: '3.5rem' },
+              fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3.5rem' },
               fontWeight: 700,
               mb: 2,
               background: 'linear-gradient(45deg, #1976d2 30%, #42a5f5 90%)',
@@ -104,6 +104,8 @@ const Home = () => {
               maxWidth: 600,
               mx: 'auto',
               lineHeight: 1.5,
+              fontSize: { xs: '1rem', sm: '1.25rem', md: '1.5rem' },
+              px: { xs: 2, sm: 0 },
             }}
           >
             Discover insights on technology, design, and innovation that shape
@@ -118,9 +120,9 @@ const Home = () => {
             sx={{
               borderRadius: 2,
               textTransform: 'none',
-              fontSize: '1.1rem',
-              px: 4,
-              py: 1.5,
+              fontSize: { xs: '1rem', sm: '1.1rem' },
+              px: { xs: 3, sm: 4 },
+              py: { xs: 1.2, sm: 1.5 },
             }}
           >
             Explore All Posts
@@ -136,13 +138,14 @@ const Home = () => {
                 fontWeight: 600,
                 mb: 4,
                 textAlign: 'center',
+                fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
               }}
             >
               Featured Posts
             </Typography>
-            <Grid container spacing={4}>
+            <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
               {featuredPosts.slice(0, 3).map(post => (
-                <Grid item xs={12} md={4} key={post.id}>
+                <Grid item xs={12} sm={6} lg={4} key={post.id}>
                   <PostCard post={post} featured />
                 </Grid>
               ))}
@@ -157,14 +160,17 @@ const Home = () => {
               sx={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                alignItems: 'center',
+                alignItems: { xs: 'flex-start', sm: 'center' },
                 mb: 4,
+                flexDirection: { xs: 'column', sm: 'row' },
+                gap: { xs: 2, sm: 0 },
               }}
             >
               <Typography
                 variant="h3"
                 sx={{
                   fontWeight: 600,
+                  fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
                 }}
               >
                 Recent Posts
@@ -176,18 +182,28 @@ const Home = () => {
                 sx={{
                   textTransform: 'none',
                   fontWeight: 500,
+                  alignSelf: { xs: 'flex-start', sm: 'auto' },
                 }}
               >
                 View All
               </Button>
             </Box>
-            <Grid container spacing={3}>
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: {
+                  xs: '1fr',
+                  sm: 'repeat(2, 1fr)',
+                  md: 'repeat(3, 1fr)',
+                  lg: 'repeat(4, 1fr)',
+                },
+                gap: { xs: 2, sm: 3 },
+              }}
+            >
               {recentPosts.map(post => (
-                <Grid item xs={12} sm={6} lg={4} key={post.id}>
-                  <PostCard post={post} />
-                </Grid>
+                <PostCard key={post.id} post={post} />
               ))}
-            </Grid>
+            </Box>
           </Box>
         )}
 

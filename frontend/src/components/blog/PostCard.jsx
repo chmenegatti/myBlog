@@ -9,30 +9,24 @@ import {
   useTheme,
 } from '@mui/material';
 import { Link } from 'react-router-dom';
-import {
-  formatDate,
-  formatReadingTime,
-  getImageUrl,
-} from '../../utils/helpers';
+import { formatDate, getImageUrl } from '../../utils/helpers';
 
 const PostCard = ({ post, featured = false }) => {
   const theme = useTheme();
 
   if (!post) return null;
 
-  const cardHeight = featured ? 400 : 320;
-  const imageHeight = featured ? 200 : 160;
-
   return (
     <Card
       component={Link}
       to={`/blog/${post.slug}`}
       sx={{
-        height: cardHeight,
+        height: '100%',
         display: 'flex',
         flexDirection: 'column',
         textDecoration: 'none',
         transition: 'all 0.3s ease',
+        borderRadius: 2,
         '&:hover': {
           transform: 'translateY(-4px)',
           boxShadow: theme.shadows[8],
@@ -42,36 +36,38 @@ const PostCard = ({ post, featured = false }) => {
     >
       <CardMedia
         component="img"
-        height={imageHeight}
-        image={getImageUrl(post.featured_image)}
-        alt={post.title}
         sx={{
+          height: featured ? 200 : 160,
           objectFit: 'cover',
         }}
+        image={getImageUrl(post.featured_img)}
+        alt={post.title}
       />
+
       <CardContent
         sx={{
           flexGrow: 1,
           display: 'flex',
           flexDirection: 'column',
-          p: featured ? 3 : 2,
+          p: 2,
         }}
       >
-        <Box sx={{ mb: 2 }}>
-          {post.category && (
-            <Chip
-              label={post.category.name}
-              size="small"
-              sx={{
-                mb: 1,
-                backgroundColor: 'primary.main',
-                color: 'primary.contrastText',
-                fontWeight: 500,
-              }}
-            />
-          )}
-        </Box>
+        {/* Category */}
+        {post.category && (
+          <Chip
+            label={post.category.name}
+            size="small"
+            sx={{
+              alignSelf: 'flex-start',
+              mb: 1.5,
+              backgroundColor: 'primary.main',
+              color: 'primary.contrastText',
+              fontWeight: 500,
+            }}
+          />
+        )}
 
+        {/* Title */}
         <Typography
           variant={featured ? 'h5' : 'h6'}
           component="h2"
@@ -83,13 +79,14 @@ const PostCard = ({ post, featured = false }) => {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             display: '-webkit-box',
-            WebkitLineClamp: featured ? 3 : 2,
+            WebkitLineClamp: 2,
             WebkitBoxOrient: 'vertical',
           }}
         >
           {post.title}
         </Typography>
 
+        {/* Excerpt */}
         <Typography
           variant="body2"
           sx={{
@@ -99,7 +96,7 @@ const PostCard = ({ post, featured = false }) => {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             display: '-webkit-box',
-            WebkitLineClamp: featured ? 3 : 2,
+            WebkitLineClamp: 3,
             WebkitBoxOrient: 'vertical',
             lineHeight: 1.5,
           }}
@@ -107,6 +104,7 @@ const PostCard = ({ post, featured = false }) => {
           {post.excerpt}
         </Typography>
 
+        {/* Author and Date */}
         <Box
           sx={{
             display: 'flex',
@@ -121,24 +119,32 @@ const PostCard = ({ post, featured = false }) => {
               alt={post.author?.name}
               sx={{ width: 24, height: 24 }}
             />
-            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+            <Typography
+              variant="caption"
+              sx={{
+                color: 'text.secondary',
+                fontSize: '0.75rem',
+              }}
+            >
               {post.author?.name}
             </Typography>
           </Box>
 
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-              {formatDate(post.created_at)}
-            </Typography>
-            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-              {formatReadingTime(post.reading_time)}
-            </Typography>
-          </Box>
+          <Typography
+            variant="caption"
+            sx={{
+              color: 'text.secondary',
+              fontSize: '0.75rem',
+            }}
+          >
+            {formatDate(post.created_at)}
+          </Typography>
         </Box>
 
+        {/* Tags */}
         {post.tags && post.tags.length > 0 && (
           <Box sx={{ display: 'flex', gap: 0.5, mt: 1, flexWrap: 'wrap' }}>
-            {post.tags.slice(0, featured ? 4 : 3).map(tag => (
+            {post.tags.slice(0, 3).map(tag => (
               <Chip
                 key={tag.id}
                 label={tag.name}

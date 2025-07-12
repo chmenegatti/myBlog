@@ -29,7 +29,12 @@ export const postsService = {
       if (tags) params.append('tags', tags);
 
       const response = await api.get(`/public/posts?${params}`);
-      return response.data;
+      return {
+        data: response.data.posts,
+        total: response.data.total,
+        limit: response.data.limit,
+        offset: response.data.offset,
+      };
     } catch (error) {
       if (shouldUseMockData(error)) {
         console.log('Backend not available, using mock data');
@@ -44,7 +49,12 @@ export const postsService = {
     try {
       // Since backend doesn't have dedicated featured endpoint, we'll get recent posts
       const response = await api.get('/public/posts?limit=6');
-      return response.data;
+      return {
+        data: response.data.posts,
+        total: response.data.total,
+        limit: response.data.limit,
+        offset: response.data.offset,
+      };
     } catch (error) {
       if (shouldUseMockData(error)) {
         console.log('Backend not available, using mock data');
@@ -58,7 +68,7 @@ export const postsService = {
   getPostBySlug: async slug => {
     try {
       const response = await api.get(`/public/posts/${slug}`);
-      return response.data;
+      return { data: response.data };
     } catch (error) {
       if (shouldUseMockData(error)) {
         console.log('Backend not available, using mock data');
@@ -80,7 +90,12 @@ export const postsService = {
 
       // Since backend doesn't have dedicated search endpoint, we'll simulate
       const response = await api.get(`/public/posts?${params}`);
-      return response.data;
+      return {
+        data: response.data.posts,
+        total: response.data.total,
+        limit: response.data.limit,
+        offset: response.data.offset,
+      };
     } catch (error) {
       if (shouldUseMockData(error)) {
         console.log('Backend not available, using mock data');
@@ -146,6 +161,12 @@ export const postsService = {
     });
 
     const response = await api.get(`/posts?${params}`);
+    return response.data;
+  },
+
+  // Get post by ID for admin (PROTECTED ROUTE)
+  getPostById: async id => {
+    const response = await api.get(`/posts/${id}`);
     return response.data;
   },
 

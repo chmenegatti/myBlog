@@ -11,6 +11,7 @@ import Layout from './components/layout/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import Blog from './pages/Blog';
+import PostDetail from './pages/PostDetail';
 import Login from './pages/Login';
 import AdminDashboard from './pages/AdminDashboard';
 import PostEditor from './pages/PostEditor';
@@ -31,14 +32,7 @@ function App() {
                     <Routes>
                       <Route path="/" element={<Home />} />
                       <Route path="/blog" element={<Blog />} />
-                      <Route
-                        path="/blog/:slug"
-                        element={
-                          <div style={{ padding: '2rem' }}>
-                            Post Details - Coming Soon
-                          </div>
-                        }
-                      />
+                      <Route path="/blog/:slug" element={<PostDetail />} />
                       <Route
                         path="/categories"
                         element={

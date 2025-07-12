@@ -278,7 +278,7 @@ const AdminDashboard = () => {
                         <TableCell align="right">
                           <IconButton
                             size="small"
-                            onClick={() => navigate(`/posts/${post.slug}`)}
+                            onClick={() => navigate(`/blog/${post.slug}`)}
                             title="View Post"
                           >
                             <ViewIcon />
