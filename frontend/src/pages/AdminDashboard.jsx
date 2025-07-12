@@ -47,8 +47,10 @@ const AdminDashboard = () => {
   const loadPosts = async () => {
     try {
       console.log('Loading posts...');
-      const response = await postsService.getAllPosts();
+      const response = await postsService.getAdminPosts();
       console.log('Raw response:', response);
+      console.log('Response type:', typeof response);
+      console.log('Response keys:', Object.keys(response || {}));
 
       // The mock returns { data: posts[], total, page, limit, totalPages }
       // The real API should return { data: posts[] } or just posts[]
@@ -56,16 +58,22 @@ const AdminDashboard = () => {
 
       if (Array.isArray(response)) {
         // Direct array response
+        console.log('Response is direct array');
         postsData = response;
       } else if (response.data && Array.isArray(response.data)) {
         // Response has data property with array
+        console.log('Response has data property with array');
         postsData = response.data;
       } else if (response.posts && Array.isArray(response.posts)) {
         // Response has posts property with array
+        console.log('Response has posts property with array');
         postsData = response.posts;
+      } else {
+        console.log('Could not extract posts array from response:', response);
       }
 
       console.log('Processed posts data:', postsData);
+      console.log('Posts data length:', postsData.length);
       setPosts(postsData);
 
       // Calculate stats with safe fallback

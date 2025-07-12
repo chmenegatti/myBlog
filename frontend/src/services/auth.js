@@ -91,7 +91,7 @@ export const authService = {
     if (!token) return null;
 
     try {
-      const response = await api.get('/auth/me');
+      const response = await api.get('/users/me');
       return response.data;
     } catch (error) {
       // Mock user for testing
