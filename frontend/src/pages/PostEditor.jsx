@@ -1,28 +1,31 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Container,
   Paper,
-  TextField,
-  Button,
   Box,
-  Typography,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   Alert,
   Grid,
   CircularProgress,
+  Stack,
+  Divider,
 } from '@mui/material';
-import { Save as SaveIcon, Preview as PreviewIcon } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import MDEditor from '@uiw/react-md-editor';
 import { postsService } from '../services/posts';
+import { imageService } from '../services/image';
 import '../styles/editor.css';
+
+// Import new components
+import PostStatsHeader from '../components/editor/PostStatsHeader';
+import PostBasicFields from '../components/editor/PostBasicFields';
+import PostContentEditor from '../components/editor/PostContentEditor';
+import PostSettings from '../components/editor/PostSettings';
+import PostImageUpload from '../components/editor/PostImageUpload';
+import PostActionBar from '../components/editor/PostActionBar';
 
 const PostEditor = () => {
   const [post, setPost] = useState({
+    id: '',
     title: '',
     slug: '',
     excerpt: '',
@@ -30,13 +33,18 @@ const PostEditor = () => {
     status: 'draft',
     category: '',
     tags: '',
-    featured_image: '',
-    meta_title: '',
-    meta_description: '',
+    featured_img: '',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const [activeTab, setActiveTab] = useState(0);
+  const [wordCount, setWordCount] = useState(0);
+  const [readingTime, setReadingTime] = useState(0);
+  const [autoSave, setAutoSave] = useState(true);
+  const [lastSaved, setLastSaved] = useState(null);
+  const autoSaveTimer = useRef(null);
 
   const navigate = useNavigate();
   const { id } = useParams();
@@ -47,7 +55,15 @@ const PostEditor = () => {
       try {
         setLoading(true);
         const response = await postsService.getPostById(id);
-        setPost(response.data);
+
+        if (response.data) {
+          setPost(response.data);
+          const words = calculateWordCount(response.data.content);
+          setWordCount(words);
+          setReadingTime(calculateReadingTime(words));
+        } else {
+          setError('No post data received');
+        }
       } catch (error) {
         setError('Failed to load post');
         console.error('Error loading post:', error);
@@ -62,17 +78,107 @@ const PostEditor = () => {
   }, [id, isEdit]);
 
   const generateSlug = title => {
-    return title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '');
+    if (!title) return '';
+
+    return (
+      title
+        .toLowerCase()
+        // Replace common accented characters
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        // Replace spaces and special characters with hyphens
+        .replace(/[^a-z0-9]+/g, '-')
+        // Remove leading and trailing hyphens
+        .replace(/^-+|-+$/g, '') || 'untitled'
+    );
+  };
+
+  const calculateWordCount = content => {
+    if (!content) return 0;
+    const text = content.replace(/[#*`_~]/g, '').trim();
+    return text ? text.split(/\s+/).length : 0;
+  };
+
+  const calculateReadingTime = wordCount => {
+    // Average reading speed: 200 words per minute
+    return Math.ceil(wordCount / 200);
+  };
+
+  const autoSavePost = async () => {
+    if (!isEdit || !post.title.trim()) return;
+
+    try {
+      const postData = { ...post, status: 'draft' };
+      await postsService.updatePost(id, postData);
+      setLastSaved(new Date());
+    } catch (error) {
+      console.error('Auto-save failed:', error);
+    }
   };
 
   const handleFieldChange = (field, value) => {
+    setPost(prev => {
+      const updated = {
+        ...prev,
+        [field]: value,
+        // Generate slug automatically whenever title changes
+        ...(field === 'title' && { slug: generateSlug(value) }),
+      };
+
+      // Update word count and reading time when content changes
+      if (field === 'content') {
+        const words = calculateWordCount(value);
+        setWordCount(words);
+        setReadingTime(calculateReadingTime(words));
+      }
+
+      return updated;
+    });
+
+    // Auto-save after 2 seconds of inactivity
+    if (autoSave && isEdit) {
+      if (autoSaveTimer.current) {
+        clearTimeout(autoSaveTimer.current);
+      }
+      autoSaveTimer.current = setTimeout(autoSavePost, 2000);
+    }
+  };
+
+  const handleImageUpload = async event => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setError('Please select an image file');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Image size must be less than 5MB');
+      return;
+    }
+
+    setUploading(true);
+    setError('');
+
+    try {
+      const response = await imageService.uploadImage(file, 'Featured image');
+      setPost(prev => ({
+        ...prev,
+        featured_img: response.url,
+      }));
+      setSuccess('Image uploaded successfully!');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to upload image');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleRemoveImage = () => {
     setPost(prev => ({
       ...prev,
-      [field]: value,
-      ...(field === 'title' && !isEdit && { slug: generateSlug(value) }),
+      featured_img: '',
     }));
   };
 
@@ -83,23 +189,36 @@ const PostEditor = () => {
 
     try {
       const postData = { ...post, status };
+      console.log('Submitting post with status:', status);
+      console.log('Full post data:', postData);
 
       if (isEdit) {
-        await postsService.updatePost(id, postData);
-        setSuccess('Post updated successfully!');
+        const response = await postsService.updatePost(id, postData);
+        console.log('Update response:', response);
+        setSuccess(
+          `Post ${status === 'published' ? 'published' : 'saved'} successfully!`
+        );
+
+        // Update local state to reflect the new status
+        setPost(prev => ({ ...prev, status }));
       } else {
-        await postsService.createPost(postData);
-        setSuccess('Post created successfully!');
+        const response = await postsService.createPost(postData);
+        console.log('Create response:', response);
+        setSuccess(
+          `Post ${status === 'published' ? 'published' : 'created'} successfully!`
+        );
         setTimeout(() => navigate('/admin'), 1500);
       }
     } catch (err) {
+      console.error('Submit error:', err);
+      console.error('Error response:', err.response?.data);
       setError(err.response?.data?.message || 'Failed to save post');
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading && isEdit) {
+  if (loading && isEdit && !post.id) {
     return (
       <Box
         sx={{
@@ -120,157 +239,73 @@ const PostEditor = () => {
         <title>{isEdit ? 'Edit Post' : 'New Post'} - MyBlog Admin</title>
       </Helmet>
 
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Paper sx={{ p: 4 }}>
-          <Typography variant="h4" sx={{ mb: 4, fontWeight: 600 }}>
-            {isEdit ? 'Edit Post' : 'Create New Post'}
-          </Typography>
+      <Container maxWidth="xl" sx={{ py: 4 }}>
+        <PostStatsHeader
+          isEdit={isEdit}
+          wordCount={wordCount}
+          readingTime={readingTime}
+          lastSaved={lastSaved}
+          autoSave={autoSave}
+          setAutoSave={setAutoSave}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+        />
 
+        <Paper sx={{ overflow: 'hidden' }}>
           {error && (
-            <Alert severity="error" sx={{ mb: 3 }}>
+            <Alert severity="error" sx={{ m: 3, mb: 0 }}>
               {error}
             </Alert>
           )}
 
           {success && (
-            <Alert severity="success" sx={{ mb: 3 }}>
+            <Alert severity="success" sx={{ m: 3, mb: 0 }}>
               {success}
             </Alert>
           )}
 
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={8}>
-              <TextField
-                fullWidth
-                label="Title"
-                value={post.title}
-                onChange={e => handleFieldChange('title', e.target.value)}
-                sx={{ mb: 3 }}
-                required
-              />
-
-              <TextField
-                fullWidth
-                label="Slug"
-                value={post.slug}
-                onChange={e => handleFieldChange('slug', e.target.value)}
-                sx={{ mb: 3 }}
-                helperText="URL-friendly version of the title"
-                required
-              />
-
-              <TextField
-                fullWidth
-                label="Excerpt"
-                value={post.excerpt}
-                onChange={e => handleFieldChange('excerpt', e.target.value)}
-                multiline
-                rows={3}
-                sx={{ mb: 3 }}
-                helperText="Brief description of the post"
-              />
-
-              <Typography variant="h6" sx={{ mb: 2 }}>
-                Content
-              </Typography>
-              <Box sx={{ mb: 3 }}>
-                <MDEditor
-                  value={post.content}
-                  onChange={value => handleFieldChange('content', value || '')}
-                  height={400}
-                  preview="edit"
-                  data-color-mode="light"
+          <Grid container sx={{ minHeight: '80vh' }}>
+            {/* Left Column - Main Content */}
+            <Grid
+              item
+              xs={12}
+              lg={9}
+              sx={{ p: 3, borderRight: { lg: 1 }, borderColor: 'divider' }}
+            >
+              <Stack spacing={3}>
+                <PostBasicFields
+                  post={post}
+                  handleFieldChange={handleFieldChange}
                 />
-              </Box>
+                <Divider />
+                <PostContentEditor
+                  post={post}
+                  handleFieldChange={handleFieldChange}
+                  activeTab={activeTab}
+                />
+              </Stack>
             </Grid>
 
-            <Grid item xs={12} md={4}>
-              <FormControl fullWidth sx={{ mb: 3 }}>
-                <InputLabel>Status</InputLabel>
-                <Select
-                  value={post.status}
-                  onChange={e => handleFieldChange('status', e.target.value)}
-                  label="Status"
-                >
-                  <MenuItem value="draft">Draft</MenuItem>
-                  <MenuItem value="published">Published</MenuItem>
-                </Select>
-              </FormControl>
-
-              <TextField
-                fullWidth
-                label="Category"
-                value={post.category}
-                onChange={e => handleFieldChange('category', e.target.value)}
-                sx={{ mb: 3 }}
-              />
-
-              <TextField
-                fullWidth
-                label="Tags"
-                value={post.tags}
-                onChange={e => handleFieldChange('tags', e.target.value)}
-                sx={{ mb: 3 }}
-                helperText="Comma-separated tags"
-              />
-
-              <TextField
-                fullWidth
-                label="Featured Image URL"
-                value={post.featured_image}
-                onChange={e =>
-                  handleFieldChange('featured_image', e.target.value)
-                }
-                sx={{ mb: 3 }}
-              />
-
-              <Typography variant="h6" sx={{ mb: 2 }}>
-                SEO Settings
-              </Typography>
-
-              <TextField
-                fullWidth
-                label="Meta Title"
-                value={post.meta_title}
-                onChange={e => handleFieldChange('meta_title', e.target.value)}
-                sx={{ mb: 3 }}
-              />
-
-              <TextField
-                fullWidth
-                label="Meta Description"
-                value={post.meta_description}
-                onChange={e =>
-                  handleFieldChange('meta_description', e.target.value)
-                }
-                multiline
-                rows={3}
-                sx={{ mb: 3 }}
-              />
+            {/* Right Column - Settings */}
+            <Grid item xs={12} lg={3} sx={{ p: 3, backgroundColor: 'grey.50' }}>
+              <Stack spacing={3}>
+                <PostSettings
+                  post={post}
+                  handleFieldChange={handleFieldChange}
+                />
+                <Divider />
+                <PostImageUpload
+                  post={post}
+                  uploading={uploading}
+                  handleFieldChange={handleFieldChange}
+                  handleImageUpload={handleImageUpload}
+                  handleRemoveImage={handleRemoveImage}
+                />
+              </Stack>
             </Grid>
           </Grid>
 
-          <Box sx={{ display: 'flex', gap: 2, mt: 4 }}>
-            <Button
-              variant="outlined"
-              onClick={() => handleSubmit('draft')}
-              disabled={loading}
-              startIcon={<SaveIcon />}
-            >
-              Save as Draft
-            </Button>
-            <Button
-              variant="contained"
-              onClick={() => handleSubmit('published')}
-              disabled={loading}
-              startIcon={<PreviewIcon />}
-            >
-              {loading ? <CircularProgress size={20} /> : 'Publish'}
-            </Button>
-            <Button variant="text" onClick={() => navigate('/admin')}>
-              Cancel
-            </Button>
-          </Box>
+          <PostActionBar loading={loading} handleSubmit={handleSubmit} />
         </Paper>
       </Container>
     </>

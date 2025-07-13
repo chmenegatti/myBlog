@@ -167,7 +167,7 @@ export const postsService = {
   // Get post by ID for admin (PROTECTED ROUTE)
   getPostById: async id => {
     const response = await api.get(`/posts/${id}`);
-    return response.data;
+    return { data: response.data };
   },
 
   // Create post (PROTECTED ROUTE)

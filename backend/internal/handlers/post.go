@@ -125,9 +125,11 @@ func (h *PostHandler) UpdatePost(c *gin.Context) {
 
 	var req struct {
 		Title       string `json:"title"`
+		Slug        string `json:"slug"`
 		Content     string `json:"content"`
 		Excerpt     string `json:"excerpt"`
 		FeaturedImg string `json:"featured_img"`
+		Status      string `json:"status"`
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -138,8 +140,14 @@ func (h *PostHandler) UpdatePost(c *gin.Context) {
 	if req.Title != "" {
 		post.Title = req.Title
 	}
+	if req.Slug != "" {
+		post.Slug = req.Slug
+	}
 	if req.Content != "" {
 		post.Content = req.Content
+	}
+	if req.Status != "" {
+		post.Status = models.PostStatus(req.Status)
 	}
 	post.Excerpt = req.Excerpt
 	post.FeaturedImg = req.FeaturedImg
