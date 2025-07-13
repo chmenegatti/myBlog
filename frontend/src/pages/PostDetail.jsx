@@ -16,14 +16,17 @@ import { Helmet } from 'react-helmet-async';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
-import 'highlight.js/styles/github.css';
+// Don't import the default github.css to avoid conflicts
+import '../styles/blog-content.css';
 import { formatDate, getImageUrl } from '../utils/helpers';
 import postsService from '../services/posts';
 import CommentsSection from '../components/comments/CommentsSection';
+import { useTheme } from '../hooks/useTheme';
 
 const PostDetail = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
+  const { isDarkMode } = useTheme();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -192,6 +195,8 @@ const PostDetail = () => {
 
         {/* Content */}
         <Box
+          className="blog-content"
+          data-theme={isDarkMode ? 'dark' : 'light'}
           sx={{
             '& h1, & h2, & h3, & h4, & h5, & h6': {
               mt: 4,
@@ -225,26 +230,21 @@ const PostDetail = () => {
               my: 3,
               fontStyle: 'italic',
               color: 'text.secondary',
-              backgroundColor: 'grey.50',
               py: 2,
               borderRadius: '0 4px 4px 0',
             },
             '& pre': {
-              backgroundColor: 'grey.100',
               p: 2,
               borderRadius: 1,
               overflow: 'auto',
               fontSize: '0.9rem',
-              border: '1px solid',
-              borderColor: 'grey.300',
+              my: 2,
             },
             '& code': {
-              backgroundColor: 'grey.100',
               px: 1,
               py: 0.5,
               borderRadius: 0.5,
               fontSize: '0.9em',
-              color: 'error.main',
               fontFamily: 'monospace',
             },
             '& ul, & ol': {
@@ -253,21 +253,30 @@ const PostDetail = () => {
               '& li': {
                 mb: 1,
                 lineHeight: 1.6,
+                color: 'text.primary',
               },
             },
             '& table': {
               width: '100%',
               borderCollapse: 'collapse',
               my: 3,
+              borderRadius: 1,
+              overflow: 'hidden',
               '& th, & td': {
-                border: '1px solid',
-                borderColor: 'grey.300',
                 p: 1.5,
                 textAlign: 'left',
               },
               '& th': {
-                backgroundColor: 'grey.100',
                 fontWeight: 600,
+              },
+            },
+            '& a': {
+              color: 'primary.main',
+              textDecoration: 'none',
+              fontWeight: 500,
+              '&:hover': {
+                color: 'primary.dark',
+                textDecoration: 'underline',
               },
             },
           }}

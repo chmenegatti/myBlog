@@ -16,7 +16,7 @@ export const commentService = {
   // Get all comments (PROTECTED ROUTE - Admin only)
   getComments: async () => {
     const response = await api.get('/comments');
-    return response.data;
+    return response.data; // Return response.data instead of full response
   },
 
   // Update comment (PROTECTED ROUTE - Admin only)

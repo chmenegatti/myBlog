@@ -1,0 +1,274 @@
+/* Blog Content Styles - Theme Adaptive */
+
+/* Light Theme Code Blocks */
+[data-theme="light"] .blog-content pre {
+  background-color: #f5f5f5 !important;
+  border: 1px solid #e0e0e0 !important;
+  color: #212529 !important;
+}
+
+[data-theme="light"] .blog-content pre code {
+  background-color: transparent !important;
+  color: inherit !important;
+  border: none !important;
+  padding: 0 !important;
+  display: block !important;
+  width: 100% !important;
+}
+
+[data-theme="light"] .blog-content :not(pre) > code {
+  background-color: #f5f5f5 !important;
+  color: #e83e8c !important;
+  border: 1px solid #e0e0e0 !important;
+}
+
+[data-theme="light"] .blog-content blockquote {
+  background-color: #f8f9fa !important;
+  border-left-color: #1976d2 !important;
+  color: #6c757d !important;
+}
+
+[data-theme="light"] .blog-content table th {
+  background-color: #f8f9fa !important;
+  border-color: #dee2e6 !important;
+}
+
+[data-theme="light"] .blog-content table td {
+  border-color: #dee2e6 !important;
+}
+
+[data-theme="light"] .blog-content a {
+  color: #1976d2 !important;
+}
+
+[data-theme="light"] .blog-content a:hover {
+  color: #1565c0 !important;
+}
+
+/* Dark Theme Code Blocks */
+[data-theme="dark"] .blog-content pre {
+  background-color: #1a1a1a !important;
+  border: 1px solid #333333 !important;
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .blog-content pre code {
+  background-color: transparent !important;
+  color: inherit !important;
+  border: none !important;
+  padding: 0 !important;
+  display: block !important;
+  width: 100% !important;
+}
+
+[data-theme="dark"] .blog-content :not(pre) > code {
+  background-color: #2d3748 !important;
+  color: #ff6b9d !important;
+  border: 1px solid #4a5568 !important;
+}
+
+[data-theme="dark"] .blog-content blockquote {
+  background-color: #2d3748 !important;
+  border-left-color: #90caf9 !important;
+  color: #a0aec0 !important;
+}
+
+[data-theme="dark"] .blog-content table th {
+  background-color: #2d3748 !important;
+  border-color: #4a5568 !important;
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .blog-content table td {
+  border-color: #4a5568 !important;
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .blog-content a {
+  color: #90caf9 !important;
+}
+
+[data-theme="dark"] .blog-content a:hover {
+  color: #e3f2fd !important;
+}
+
+/* Syntax Highlighting for Dark Theme */
+[data-theme="dark"] .hljs {
+  background: transparent !important;
+  color: #e2e8f0 !important;
+  display: block !important;
+  overflow-x: auto !important;
+  padding: 0 !important;
+}
+
+[data-theme="dark"] .blog-content pre .hljs {
+  background: transparent !important;
+}
+
+[data-theme="dark"] .hljs-keyword {
+  color: #ff6b9d !important;
+}
+
+[data-theme="dark"] .hljs-string {
+  color: #68d391 !important;
+}
+
+[data-theme="dark"] .hljs-number {
+  color: #fbb6ce !important;
+}
+
+[data-theme="dark"] .hljs-comment {
+  color: #a0aec0 !important;
+  font-style: italic;
+}
+
+[data-theme="dark"] .hljs-function {
+  color: #90caf9 !important;
+}
+
+[data-theme="dark"] .hljs-variable {
+  color: #fbb6ce !important;
+}
+
+[data-theme="dark"] .hljs-title {
+  color: #90caf9 !important;
+}
+
+[data-theme="dark"] .hljs-attr {
+  color: #90caf9 !important;
+}
+
+[data-theme="dark"] .hljs-tag {
+  color: #ff6b9d !important;
+}
+
+/* Syntax Highlighting for Light Theme */
+[data-theme="light"] .hljs {
+  background: transparent !important;
+  color: #212529 !important;
+  display: block !important;
+  overflow-x: auto !important;
+  padding: 0 !important;
+}
+
+[data-theme="light"] .blog-content pre .hljs {
+  background: transparent !important;
+}
+
+[data-theme="light"] .hljs-keyword {
+  color: #d73502 !important;
+}
+
+[data-theme="light"] .hljs-string {
+  color: #22863a !important;
+}
+
+[data-theme="light"] .hljs-number {
+  color: #005cc5 !important;
+}
+
+[data-theme="light"] .hljs-comment {
+  color: #6a737d !important;
+  font-style: italic;
+}
+
+[data-theme="light"] .hljs-function {
+  color: #6f42c1 !important;
+}
+
+[data-theme="light"] .hljs-variable {
+  color: #005cc5 !important;
+}
+
+[data-theme="light"] .hljs-title {
+  color: #6f42c1 !important;
+}
+
+[data-theme="light"] .hljs-attr {
+  color: #005cc5 !important;
+}
+
+[data-theme="light"] .hljs-tag {
+  color: #d73502 !important;
+}
+
+/* General improvements */
+.blog-content pre {
+  border-radius: 8px !important;
+  padding: 16px !important;
+  overflow-x: auto;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  margin: 16px 0 !important;
+  display: block !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.blog-content pre code {
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  font-size: inherit !important;
+  font-family: inherit !important;
+  color: inherit !important;
+  display: block !important;
+  width: 100% !important;
+}
+
+.blog-content :not(pre) > code {
+  border-radius: 4px !important;
+  padding: 2px 6px !important;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
+  font-size: 0.9em !important;
+  display: inline !important;
+}
+
+.blog-content blockquote {
+  border-radius: 0 8px 8px 0 !important;
+  padding: 16px !important;
+  margin: 24px 0 !important;
+  font-style: italic;
+}
+
+.blog-content table {
+  border-radius: 8px !important;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.blog-content a {
+  text-decoration: none !important;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.blog-content a:hover {
+  text-decoration: underline !important;
+}
+
+/* Additional rules to ensure full background coverage */
+.blog-content pre * {
+  background: transparent !important;
+}
+
+.blog-content pre {
+  position: relative !important;
+}
+
+/* Override any conflicting styles */
+.blog-content pre code,
+.blog-content pre .hljs,
+.blog-content pre span {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Ensure proper spacing */
+.blog-content pre {
+  white-space: pre !important;
+  word-wrap: normal !important;
+  overflow-wrap: normal !important;
+}

@@ -23,11 +23,14 @@ import {
   Delete as DeleteIcon,
   Add as AddIcon,
   Visibility as ViewIcon,
+  Article as PostsIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useAuth } from '../hooks/useAuth';
 import { postsService } from '../services/posts';
+import { commentService } from '../services/comment';
+import CommentsAdmin from '../components/admin/CommentsAdmin';
 
 const AdminDashboard = () => {
   const [posts, setPosts] = useState([]);
@@ -35,6 +38,9 @@ const AdminDashboard = () => {
     totalPosts: 0,
     publishedPosts: 0,
     draftPosts: 0,
+    totalComments: 0,
+    pendingComments: 0,
+    approvedComments: 0,
   });
 
   const { user, logout } = useAuth();
@@ -42,6 +48,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     loadPosts();
+    loadCommentStats();
   }, []);
 
   const loadPosts = async () => {
@@ -83,11 +90,12 @@ const AdminDashboard = () => {
         ).length;
         const drafts = postsData.filter(post => post.status === 'draft').length;
 
-        setStats({
+        setStats(prevStats => ({
+          ...prevStats,
           totalPosts: postsData.length,
           publishedPosts: published,
           draftPosts: drafts,
-        });
+        }));
       }
     } catch (error) {
       console.error('Error loading posts:', error);
@@ -98,6 +106,62 @@ const AdminDashboard = () => {
         publishedPosts: 0,
         draftPosts: 0,
       });
+    }
+  };
+
+  const loadCommentStats = async () => {
+    try {
+      console.log('Loading comment stats...'); // Debug log
+      const response = await commentService.getComments();
+      console.log('Comment stats response:', response); // Debug log
+
+      // Handle different response formats - API returns {comments: [], total, limit, offset}
+      let comments = [];
+      if (Array.isArray(response)) {
+        comments = response;
+        console.log('Using response as array');
+      } else if (response?.comments && Array.isArray(response.comments)) {
+        comments = response.comments;
+        console.log('Using response.comments');
+      } else if (
+        response?.data?.comments &&
+        Array.isArray(response.data.comments)
+      ) {
+        comments = response.data.comments;
+        console.log('Using response.data.comments');
+      } else if (response?.data && Array.isArray(response.data)) {
+        comments = response.data;
+        console.log('Using response.data as array');
+      }
+
+      console.log(
+        'Final comments for stats:',
+        comments,
+        'Length:',
+        comments.length
+      );
+
+      const pending = comments.filter(
+        comment => comment.status === 'pending'
+      ).length;
+      const approved = comments.filter(
+        comment => comment.status === 'approved'
+      ).length;
+
+      console.log('Comment stats calculated:', {
+        total: comments.length,
+        pending,
+        approved,
+      });
+
+      setStats(prev => ({
+        ...prev,
+        totalComments: comments.length,
+        pendingComments: pending,
+        approvedComments: approved,
+      }));
+    } catch (error) {
+      console.error('Error loading comment stats:', error);
     }
   };
 
@@ -162,7 +226,7 @@ const AdminDashboard = () => {
 
         {/* Stats Cards */}
         <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={3}>
             <Card>
               <CardContent>
                 <Typography
@@ -177,7 +241,7 @@ const AdminDashboard = () => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={3}>
             <Card>
               <CardContent>
                 <Typography
@@ -195,28 +259,46 @@ const AdminDashboard = () => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={3}>
             <Card>
               <CardContent>
                 <Typography
                   variant="h6"
                   sx={{ color: 'text.secondary', mb: 1 }}
                 >
-                  Drafts
+                  Comments
+                </Typography>
+                <Typography
+                  variant="h3"
+                  sx={{ fontWeight: 600, color: 'info.main' }}
+                >
+                  {stats.totalComments}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <Card>
+              <CardContent>
+                <Typography
+                  variant="h6"
+                  sx={{ color: 'text.secondary', mb: 1 }}
+                >
+                  Pending
                 </Typography>
                 <Typography
                   variant="h3"
                   sx={{ fontWeight: 600, color: 'warning.main' }}
                 >
-                  {stats.draftPosts}
+                  {stats.pendingComments}
                 </Typography>
               </CardContent>
             </Card>
           </Grid>
         </Grid>
 
-        {/* Posts Table */}
-        <Card>
+        {/* Posts Management Section */}
+        <Card sx={{ mb: 4 }}>
           <CardContent>
             <Box
               sx={{
@@ -226,7 +308,10 @@ const AdminDashboard = () => {
                 mb: 3,
               }}
             >
-              <Typography variant="h6">Manage Posts</Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <PostsIcon color="primary" />
+                <Typography variant="h6">Manage Posts</Typography>
+              </Box>
               <Button
                 variant="contained"
                 startIcon={<AddIcon />}
@@ -317,6 +402,9 @@ const AdminDashboard = () => {
             </TableContainer>
           </CardContent>
         </Card>
+
+        {/* Comments Moderation Section */}
+        <CommentsAdmin />
 
         {/* Floating Action Button */}
         <Fab
