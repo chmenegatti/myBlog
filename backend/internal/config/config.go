@@ -63,7 +63,7 @@ func Load() (*Config, error) {
 
 	cfg := &Config{
 		Server: ServerConfig{
-			Port: getEnv("SERVER_PORT", "8080"),
+			Port: getEnv("PORT", getEnv("SERVER_PORT", "8080")), // Railway uses PORT env var
 			Env:  getEnv("SERVER_ENV", "development"),
 		},
 		Database: DatabaseConfig{

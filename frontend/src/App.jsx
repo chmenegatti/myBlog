@@ -13,6 +13,7 @@ import Home from './pages/Home';
 import Blog from './pages/Blog';
 import PostDetail from './pages/PostDetail';
 import About from './pages/About';
+import Categories from './pages/Categories';
 import Login from './pages/Login';
 import AdminDashboard from './pages/AdminDashboard';
 import PostEditor from './pages/PostEditor';
@@ -34,14 +35,7 @@ function App() {
                       <Route path="/" element={<Home />} />
                       <Route path="/blog" element={<Blog />} />
                       <Route path="/blog/:slug" element={<PostDetail />} />
-                      <Route
-                        path="/categories"
-                        element={
-                          <div style={{ padding: '2rem' }}>
-                            Categories - Coming Soon
-                          </div>
-                        }
-                      />
+                      <Route path="/categories" element={<Categories />} />
                       <Route
                         path="/search"
                         element={

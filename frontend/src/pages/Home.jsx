@@ -145,7 +145,7 @@ const Home = () => {
             </Typography>
             <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
               {featuredPosts.slice(0, 3).map(post => (
-                <Grid item xs={12} sm={6} lg={4} key={post.id}>
+                <Grid item size={{ xs: 12, sm: 12, md: 12 }} key={post.id}>
                   <PostCard post={post} featured />
                 </Grid>
               ))}
