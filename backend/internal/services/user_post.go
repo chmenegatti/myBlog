@@ -101,7 +101,7 @@ type CreatePostRequest struct {
 	Title       string   `json:"title" binding:"required"`
 	Content     string   `json:"content" binding:"required"`
 	Excerpt     string   `json:"excerpt"`
-	FeaturedImg string   `json:"featured_img"`
+	FeaturedImg string   `json:"featured_img"` // Changed to match frontend field name
 	Category    string   `json:"category"`     // Category name (single)
 	Tags        string   `json:"tags"`         // Comma-separated tag names
 	CategoryIDs []string `json:"category_ids"` // Optional: UUID strings for categories
@@ -228,7 +228,7 @@ type UpdatePostRequest struct {
 	Slug        string `json:"slug"`
 	Content     string `json:"content"`
 	Excerpt     string `json:"excerpt"`
-	FeaturedImg string `json:"featured_img"`
+	FeaturedImg string `json:"featured_img"` // Changed to match frontend field name
 	Status      string `json:"status"`
 	Category    string `json:"category"` // Category name
 	Tags        string `json:"tags"`     // Comma-separated tag names
