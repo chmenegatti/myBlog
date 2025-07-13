@@ -7,6 +7,12 @@ export const commentService = {
     return response.data;
   },
 
+  // Get comments by post ID (PUBLIC ROUTE)
+  getCommentsByPost: async postId => {
+    const response = await api.get(`/public/comments/post/${postId}`);
+    return response.data;
+  },
+
   // Get all comments (PROTECTED ROUTE - Admin only)
   getComments: async () => {
     const response = await api.get('/comments');

@@ -117,6 +117,7 @@ func setupRouter(
 			public.GET("/categories", categoryHandler.GetCategories)
 			public.GET("/tags", tagHandler.GetTags)
 			public.POST("/comments", commentHandler.CreateComment)
+			public.GET("/comments/post/:post_id", commentHandler.GetCommentsByPost)
 			public.POST("/newsletter/subscribe", newsletterHandler.Subscribe)
 			public.GET("/newsletter/unsubscribe/:token", newsletterHandler.Unsubscribe)
 		}

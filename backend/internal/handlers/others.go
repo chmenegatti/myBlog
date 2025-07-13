@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/chmenegatti/myBlog/internal/models"
 	"github.com/chmenegatti/myBlog/internal/services"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -306,6 +307,33 @@ func (h *CommentHandler) RejectComment(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Comment rejected successfully"})
+}
+
+func (h *CommentHandler) GetCommentsByPost(c *gin.Context) {
+	postID, err := uuid.Parse(c.Param("post_id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid post ID"})
+		return
+	}
+
+	comments, err := h.commentService.GetByPostID(postID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get comments"})
+		return
+	}
+
+	// Filter approved comments for public endpoint
+	approvedComments := make([]*models.Comment, 0)
+	for _, comment := range comments {
+		if comment.Status == models.CommentApproved {
+			approvedComments = append(approvedComments, comment)
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"comments": approvedComments,
+		"total":    len(approvedComments),
+	})
 }
 
 // Newsletter Handler

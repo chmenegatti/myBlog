@@ -19,6 +19,7 @@ import rehypeHighlight from 'rehype-highlight';
 import 'highlight.js/styles/github.css';
 import { formatDate, getImageUrl } from '../utils/helpers';
 import postsService from '../services/posts';
+import CommentsSection from '../components/comments/CommentsSection';
 
 const PostDetail = () => {
   const { slug } = useParams();
@@ -322,6 +323,18 @@ const PostDetail = () => {
             </Box>
           </Box>
         )}
+
+        {/* Comments Section */}
+        <Box
+          sx={{
+            mt: 6,
+            pt: 4,
+            borderTop: '2px solid',
+            borderColor: 'divider',
+          }}
+        >
+          <CommentsSection postId={post.id} />
+        </Box>
       </Container>
     </>
   );
