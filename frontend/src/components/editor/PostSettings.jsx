@@ -6,20 +6,17 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  TextField,
   Divider,
   Chip,
-  Autocomplete,
 } from '@mui/material';
 import {
   Edit as EditIcon,
   Category as CategoryIcon,
   Tag as TagIcon,
-  Add as AddIcon,
-  Close as CloseIcon,
 } from '@mui/icons-material';
 import { useState, useEffect } from 'react';
 import { postsService } from '../../services/posts';
+import TagSelector from './TagSelector';
 
 const PostSettings = ({ post, handleFieldChange }) => {
   const [categories, setCategories] = useState([]);
@@ -35,7 +32,8 @@ const PostSettings = ({ post, handleFieldChange }) => {
         setCategories(response || []);
       } catch (error) {
         console.error('Error loading categories:', error);
-        // Fallback categories if API fails
+        // Fallback categories
+        //  if API fails
         setCategories([
           { id: 1, name: 'Programming' },
           { id: 2, name: 'Tutorial' },
@@ -54,11 +52,39 @@ const PostSettings = ({ post, handleFieldChange }) => {
 
   // Parse tags from string to array when post.tags changes
   useEffect(() => {
+    console.log(
+      'PostSettings - post.tags:',
+      post.tags,
+      'type:',
+      typeof post.tags
+    );
+
     if (post.tags) {
-      const parsedTags = post.tags
-        .split(',')
-        .map(tag => tag.trim())
-        .filter(tag => tag.length > 0);
+      let parsedTags = [];
+
+      if (typeof post.tags === 'string') {
+        // If tags is a string, split by comma
+        parsedTags = post.tags
+          .split(',')
+          .map(tag => tag.trim())
+          .filter(tag => tag.length > 0);
+      } else if (Array.isArray(post.tags)) {
+        // If tags is already an array, process each element safely
+        parsedTags = post.tags
+          .filter(tag => tag != null) // Remove null/undefined
+          .map(tag => {
+            // Handle different tag formats (string, object with name property, etc.)
+            if (typeof tag === 'string') {
+              return tag.trim();
+            } else if (tag && typeof tag === 'object' && tag.name) {
+              return tag.name.trim();
+            }
+            return String(tag).trim(); // Convert to string as fallback
+          })
+          .filter(tag => tag.length > 0);
+      }
+
+      console.log('PostSettings - parsed tags:', parsedTags);
       setTags(parsedTags);
     } else {
       setTags([]);
@@ -70,8 +96,8 @@ const PostSettings = ({ post, handleFieldChange }) => {
     handleFieldChange('category', event.target.value);
   };
 
-  // Handle tags change (convert array back to comma-separated string)
-  const handleTagsChange = (event, newTags) => {
+  // Handle tags change for TagSelector component
+  const handleTagsChange = newTags => {
     setTags(newTags);
     handleFieldChange('tags', newTags.join(', '));
   };
@@ -157,44 +183,7 @@ const PostSettings = ({ post, handleFieldChange }) => {
           </Typography>
         </Box>
 
-        <Autocomplete
-          multiple
-          freeSolo
-          value={tags}
-          onChange={handleTagsChange}
-          options={[]} // Empty options since we want free text input
-          renderTags={(value, getTagProps) =>
-            value.map((option, index) => (
-              <Chip
-                variant="outlined"
-                label={option}
-                size="small"
-                color="primary"
-                {...getTagProps({ index })}
-                deleteIcon={<CloseIcon />}
-                sx={{
-                  fontSize: '0.75rem',
-                  '& .MuiChip-deleteIcon': {
-                    fontSize: '16px',
-                  },
-                }}
-              />
-            ))
-          }
-          renderInput={params => (
-            <TextField
-              {...params}
-              size="small"
-              placeholder="Type tags and press Enter"
-              helperText="Press Enter to add tags"
-            />
-          )}
-          sx={{
-            '& .MuiAutocomplete-tag': {
-              margin: '2px',
-            },
-          }}
-        />
+        <TagSelector selectedTags={tags} onTagsChange={handleTagsChange} />
       </Stack>
     </Box>
   );

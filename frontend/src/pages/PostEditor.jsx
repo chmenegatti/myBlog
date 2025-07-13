@@ -188,9 +188,36 @@ const PostEditor = () => {
     setLoading(true);
 
     try {
-      const postData = { ...post, status };
+      let postData;
+
+      // Ensure tags are always a string (comma-separated) for the backend
+      const tagsString = Array.isArray(post.tags)
+        ? post.tags.join(', ')
+        : post.tags || '';
+
+      if (isEdit) {
+        // For UPDATE, use the same format as update
+        postData = {
+          ...post,
+          status,
+          tags: tagsString,
+        };
+      } else {
+        // For CREATE, transform the data to match CreatePostRequest struct
+        postData = {
+          title: post.title,
+          content: post.content,
+          excerpt: post.excerpt,
+          featured_img: post.featured_img, // Note: backend expects FeaturedImg but we send featured_img
+          category: post.category,
+          tags: tagsString,
+          status: status || 'draft',
+        };
+      }
+
       console.log('Submitting post with status:', status);
       console.log('Full post data:', postData);
+      console.log('Is edit mode:', isEdit);
 
       if (isEdit) {
         const response = await postsService.updatePost(id, postData);
