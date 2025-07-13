@@ -269,7 +269,7 @@ const PostEditor = () => {
             {/* PRIMEIRA LINHA - Conteúdo Principal (100% largura) */}
             <Grid
               item
-              xs={12}
+              size={{ xs: 12, sm: 12, md: 12, lg: 12 }}
               sx={{
                 p: 3,
                 backgroundColor: 'background.paper',
