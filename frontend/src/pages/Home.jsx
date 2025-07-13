@@ -72,7 +72,7 @@ const Home = () => {
   return (
     <>
       <Helmet>
-        <title>MyBlog - Modern Blog Platform</title>
+        <title>Cesar Menegatti - Blog Pessoal</title>
         <meta
           name="description"
           content="A modern blog focused on technology, design, and innovation. Sharing insights and stories that matter."
@@ -94,7 +94,7 @@ const Home = () => {
               backgroundClip: 'text',
             }}
           >
-            Welcome to MyBlog
+            Bem-vindo ao meu blog pessoal.
           </Typography>
           <Typography
             variant="h5"
@@ -108,8 +108,8 @@ const Home = () => {
               px: { xs: 2, sm: 0 },
             }}
           >
-            Discover insights on technology, design, and innovation that shape
-            our digital world
+            Descubra insights de tecnologia, design e inovação que moldam nosso
+            mundo digital.
           </Typography>
           <Button
             component={Link}
@@ -125,7 +125,7 @@ const Home = () => {
               py: { xs: 1.2, sm: 1.5 },
             }}
           >
-            Explore All Posts
+            Explore Todos os Posts
           </Button>
         </Box>
 
@@ -141,7 +141,7 @@ const Home = () => {
                 fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
               }}
             >
-              Featured Posts
+              Posts em Destaques
             </Typography>
             <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
               {featuredPosts.slice(0, 3).map(post => (
@@ -173,7 +173,7 @@ const Home = () => {
                   fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
                 }}
               >
-                Recent Posts
+                Posts Recentes
               </Typography>
               <Button
                 component={Link}
@@ -185,7 +185,7 @@ const Home = () => {
                   alignSelf: { xs: 'flex-start', sm: 'auto' },
                 }}
               >
-                View All
+                Ver Todos
               </Button>
             </Box>
             <Box
@@ -224,7 +224,7 @@ const Home = () => {
               mb: 2,
             }}
           >
-            Stay Updated
+            Fique Atualizado
           </Typography>
           <Typography
             variant="body1"
@@ -235,8 +235,8 @@ const Home = () => {
               mx: 'auto',
             }}
           >
-            Subscribe to our newsletter and get the latest posts delivered
-            directly to your inbox.
+            Inscreva-se na nossa newsletter e receba os últimos posts
+            diretamente na sua caixa de entrada.
           </Typography>
           <Button
             variant="contained"
@@ -254,7 +254,7 @@ const Home = () => {
                 ?.scrollIntoView({ behavior: 'smooth' });
             }}
           >
-            Subscribe Now
+            Inscreva-se
           </Button>
         </Box>
       </Container>

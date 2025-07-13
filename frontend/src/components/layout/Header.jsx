@@ -45,8 +45,8 @@ const Header = () => {
   const navigationItems = [
     { label: 'Home', path: '/' },
     { label: 'Blog', path: '/blog' },
-    { label: 'Categories', path: '/categories' },
-    { label: 'About', path: '/about' },
+    { label: 'Categorias', path: '/categories' },
+    { label: 'Sobre', path: '/about' },
   ];
 
   const toggleMobileMenu = () => {
@@ -181,6 +181,7 @@ const Header = () => {
           '& .MuiDrawer-paper': {
             width: 280,
             backgroundColor: 'background.paper',
+            color: 'text.primary',
           },
         }}
       >
@@ -230,8 +231,16 @@ const Header = () => {
                 sx={{
                   borderRadius: 1,
                   mb: 1,
+                  textDecoration: 'none',
+                  color: 'text.primary',
                   '&:hover': {
                     backgroundColor: 'action.hover',
+                  },
+                  '&:visited': {
+                    color: 'text.primary',
+                  },
+                  '&:focus': {
+                    color: 'text.primary',
                   },
                 }}
               >
@@ -240,6 +249,7 @@ const Header = () => {
                   sx={{
                     '& .MuiTypography-root': {
                       fontWeight: 500,
+                      color: 'inherit',
                     },
                   }}
                 />

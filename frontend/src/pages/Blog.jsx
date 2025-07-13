@@ -108,7 +108,7 @@ const Blog = () => {
   return (
     <>
       <Helmet>
-        <title>Blog - MyBlog</title>
+        <title>Cesar Menegatti</title>
         <meta
           name="description"
           content="Explore our latest blog posts on technology, design, and innovation."
@@ -116,7 +116,7 @@ const Blog = () => {
       </Helmet>
 
       <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 3, md: 4 } }}>
-        {/* Header */}
+        {/* Cabeçalho */}
         <Box sx={{ textAlign: 'center', mb: { xs: 4, sm: 5, md: 6 } }}>
           <Typography
             variant="h2"
@@ -143,11 +143,12 @@ const Blog = () => {
               px: { xs: 2, sm: 0 },
             }}
           >
-            Explore our latest insights on technology, design, and innovation
+            Explore nossos insights mais recentes sobre tecnologia, design e
+            inovação
           </Typography>
         </Box>
 
-        {/* Filters */}
+        {/* Filtros */}
         <Box
           sx={{
             display: 'flex',
