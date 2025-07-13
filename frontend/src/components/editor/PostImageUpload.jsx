@@ -13,6 +13,7 @@ import {
 import {
   Upload as UploadIcon,
   Delete as DeleteIcon,
+  Image as ImageIcon,
 } from '@mui/icons-material';
 
 const PostImageUpload = ({
@@ -26,16 +27,19 @@ const PostImageUpload = ({
 
   return (
     <Box>
-      <Typography variant="body1" sx={{ mb: 2, fontWeight: 500 }}>
-        Featured Image
-      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+        <ImageIcon sx={{ color: 'primary.main', fontSize: 20 }} />
+        <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+          Featured Image
+        </Typography>
+      </Box>
 
       {post.featured_img ? (
-        <Card sx={{ mb: 2 }}>
+        <Card sx={{ mb: 2, borderRadius: 2, overflow: 'hidden' }}>
           <CardMedia
             component="img"
             sx={{
-              height: 160,
+              height: 120,
               objectFit: 'cover',
             }}
             image={post.featured_img}
@@ -43,52 +47,86 @@ const PostImageUpload = ({
           />
           <Box
             sx={{
-              p: 1,
+              p: 1.5,
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
+              backgroundColor: 'background.paper',
             }}
           >
             <Typography variant="caption" color="text.secondary">
               Current featured image
             </Typography>
-            <IconButton onClick={handleRemoveImage} color="error" size="small">
-              <DeleteIcon />
+            <IconButton
+              onClick={handleRemoveImage}
+              color="error"
+              size="small"
+              sx={{
+                '&:hover': {
+                  backgroundColor: 'error.lighter',
+                },
+              }}
+            >
+              <DeleteIcon fontSize="small" />
             </IconButton>
           </Box>
         </Card>
-      ) : null}
-
-      <Stack spacing={2}>
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleImageUpload}
-            style={{ display: 'none' }}
-          />
-          <Button
-            variant="outlined"
-            startIcon={
-              uploading ? <CircularProgress size={16} /> : <UploadIcon />
-            }
-            onClick={() => fileInputRef.current?.click()}
-            disabled={uploading}
-            size="small"
-            fullWidth
-          >
-            {uploading ? 'Uploading...' : 'Upload Image'}
-          </Button>
+      ) : (
+        <Box
+          sx={{
+            border: '2px dashed',
+            borderColor: 'grey.300',
+            borderRadius: 2,
+            p: 2,
+            textAlign: 'center',
+            backgroundColor: 'grey.50',
+            mb: 2,
+          }}
+        >
+          <ImageIcon sx={{ fontSize: 32, color: 'grey.400', mb: 0.5 }} />
+          <Typography variant="caption" color="text.secondary" display="block">
+            No image selected
+          </Typography>
         </Box>
+      )}
+
+      <Stack spacing={1.5}>
+        <Button
+          variant="contained"
+          startIcon={
+            uploading ? (
+              <CircularProgress size={16} color="inherit" />
+            ) : (
+              <UploadIcon />
+            )
+          }
+          onClick={() => {
+            const input = fileInputRef.current;
+            if (input) input.click();
+          }}
+          disabled={uploading}
+          size="medium"
+          fullWidth
+        >
+          {uploading ? 'Uploading...' : 'Upload Image'}
+        </Button>
 
         <TextField
           fullWidth
-          label="Or enter image URL"
-          value={post.featured_img}
+          label="Image URL"
+          value={post.featured_img || ''}
           onChange={e => handleFieldChange('featured_img', e.target.value)}
           size="small"
-          helperText="You can upload an image or paste a URL"
+          placeholder="https://example.com/image.jpg"
+          helperText="Or paste an image URL"
+        />
+
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleImageUpload}
+          style={{ display: 'none' }}
         />
       </Stack>
     </Box>

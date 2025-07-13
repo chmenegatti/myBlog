@@ -251,7 +251,7 @@ const PostEditor = () => {
           setActiveTab={setActiveTab}
         />
 
-        <Paper sx={{ overflow: 'hidden' }}>
+        <Paper sx={{ overflow: 'hidden', boxShadow: 3 }}>
           {error && (
             <Alert severity="error" sx={{ m: 3, mb: 0 }}>
               {error}
@@ -264,13 +264,17 @@ const PostEditor = () => {
             </Alert>
           )}
 
-          <Grid container sx={{ minHeight: '80vh' }}>
-            {/* Left Column - Main Content */}
+          {/* Layout reorganizado: Linha 1 = Conteúdo Principal, Linha 2 = Settings + Image */}
+          <Grid container sx={{ minHeight: '100vh' }} spacing={0}>
+            {/* PRIMEIRA LINHA - Conteúdo Principal (100% largura) */}
             <Grid
               item
               xs={12}
-              lg={9}
-              sx={{ p: 3, borderRight: { lg: 1 }, borderColor: 'divider' }}
+              sx={{
+                p: 3,
+                backgroundColor: 'background.paper',
+                minHeight: '70vh',
+              }}
             >
               <Stack spacing={3}>
                 <PostBasicFields
@@ -286,22 +290,34 @@ const PostEditor = () => {
               </Stack>
             </Grid>
 
-            {/* Right Column - Settings */}
-            <Grid item xs={12} lg={3} sx={{ p: 3, backgroundColor: 'grey.50' }}>
-              <Stack spacing={3}>
-                <PostSettings
-                  post={post}
-                  handleFieldChange={handleFieldChange}
-                />
-                <Divider />
-                <PostImageUpload
-                  post={post}
-                  uploading={uploading}
-                  handleFieldChange={handleFieldChange}
-                  handleImageUpload={handleImageUpload}
-                  handleRemoveImage={handleRemoveImage}
-                />
-              </Stack>
+            {/* SEGUNDA LINHA - Settings (50% largura) */}
+            <Grid
+              item
+              size={{ xs: 12, sm: 6, md: 6, lg: 6 }}
+              sx={{
+                p: 3,
+                minHeight: '30vh',
+              }}
+            >
+              <PostSettings post={post} handleFieldChange={handleFieldChange} />
+            </Grid>
+
+            {/* SEGUNDA LINHA - Image Upload (50% largura) */}
+            <Grid
+              item
+              size={{ xs: 12, sm: 6, md: 6, lg: 6 }}
+              sx={{
+                p: 3,
+                minHeight: '20vh',
+              }}
+            >
+              <PostImageUpload
+                post={post}
+                uploading={uploading}
+                handleFieldChange={handleFieldChange}
+                handleImageUpload={handleImageUpload}
+                handleRemoveImage={handleRemoveImage}
+              />
             </Grid>
           </Grid>
 

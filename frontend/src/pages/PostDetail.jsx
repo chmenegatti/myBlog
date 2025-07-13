@@ -13,6 +13,10 @@ import {
 } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
 import { Helmet } from 'react-helmet-async';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeHighlight from 'rehype-highlight';
+import 'highlight.js/styles/github.css';
 import { formatDate, getImageUrl } from '../utils/helpers';
 import postsService from '../services/posts';
 
@@ -186,49 +190,109 @@ const PostDetail = () => {
         )}
 
         {/* Content */}
-        <Typography
-          variant="body1"
+        <Box
           sx={{
-            lineHeight: 1.8,
-            fontSize: '1.1rem',
-            '& p': {
-              mb: 2,
-            },
             '& h1, & h2, & h3, & h4, & h5, & h6': {
               mt: 4,
               mb: 2,
               fontWeight: 600,
+              color: 'text.primary',
+            },
+            '& h1': { fontSize: '2rem' },
+            '& h2': { fontSize: '1.75rem' },
+            '& h3': { fontSize: '1.5rem' },
+            '& h4': { fontSize: '1.25rem' },
+            '& p': {
+              mb: 2,
+              lineHeight: 1.8,
+              fontSize: '1.1rem',
+              color: 'text.primary',
             },
             '& img': {
               maxWidth: '100%',
               height: 'auto',
               borderRadius: 1,
               my: 2,
+              display: 'block',
+              margin: '16px auto',
             },
             '& blockquote': {
               borderLeft: '4px solid',
               borderColor: 'primary.main',
               pl: 2,
               ml: 0,
+              my: 3,
               fontStyle: 'italic',
               color: 'text.secondary',
+              backgroundColor: 'grey.50',
+              py: 2,
+              borderRadius: '0 4px 4px 0',
             },
             '& pre': {
               backgroundColor: 'grey.100',
               p: 2,
               borderRadius: 1,
               overflow: 'auto',
+              fontSize: '0.9rem',
+              border: '1px solid',
+              borderColor: 'grey.300',
             },
             '& code': {
               backgroundColor: 'grey.100',
-              px: 0.5,
-              py: 0.25,
+              px: 1,
+              py: 0.5,
               borderRadius: 0.5,
               fontSize: '0.9em',
+              color: 'error.main',
+              fontFamily: 'monospace',
+            },
+            '& ul, & ol': {
+              mb: 2,
+              pl: 3,
+              '& li': {
+                mb: 1,
+                lineHeight: 1.6,
+              },
+            },
+            '& table': {
+              width: '100%',
+              borderCollapse: 'collapse',
+              my: 3,
+              '& th, & td': {
+                border: '1px solid',
+                borderColor: 'grey.300',
+                p: 1.5,
+                textAlign: 'left',
+              },
+              '& th': {
+                backgroundColor: 'grey.100',
+                fontWeight: 600,
+              },
             },
           }}
-          dangerouslySetInnerHTML={{ __html: post.content }}
-        />
+        >
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeHighlight]}
+            components={{
+              img: ({ src, alt }) => (
+                <img
+                  src={src}
+                  alt={alt}
+                  style={{
+                    maxWidth: '100%',
+                    height: 'auto',
+                    borderRadius: '8px',
+                    margin: '16px auto',
+                    display: 'block',
+                  }}
+                />
+              ),
+            }}
+          >
+            {post.content}
+          </ReactMarkdown>
+        </Box>
 
         {/* Tags */}
         {post.tags && post.tags.length > 0 && (
