@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"strings"
 
+	"log"
+
 	"github.com/chmenegatti/myBlog/internal/models"
 	"github.com/chmenegatti/myBlog/internal/services"
 	"github.com/gin-gonic/gin"
@@ -29,6 +31,12 @@ func (h *PostHandler) CreatePost(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	// Debug logs
+	log.Printf("DEBUG CreatePost - Received data:")
+	log.Printf("DEBUG CreatePost - Title: %s", req.Title)
+	log.Printf("DEBUG CreatePost - Category: %s", req.Category)
+	log.Printf("DEBUG CreatePost - Tags: '%s'", req.Tags)
 
 	userID, exists := c.Get("user_id")
 	if !exists {
@@ -117,42 +125,21 @@ func (h *PostHandler) UpdatePost(c *gin.Context) {
 		return
 	}
 
-	post, err := h.postService.GetByID(id)
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Post not found"})
-		return
-	}
-
-	var req struct {
-		Title       string `json:"title"`
-		Slug        string `json:"slug"`
-		Content     string `json:"content"`
-		Excerpt     string `json:"excerpt"`
-		FeaturedImg string `json:"featured_img"`
-		Status      string `json:"status"`
-	}
+	var req services.UpdatePostRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if req.Title != "" {
-		post.Title = req.Title
-	}
-	if req.Slug != "" {
-		post.Slug = req.Slug
-	}
-	if req.Content != "" {
-		post.Content = req.Content
-	}
-	if req.Status != "" {
-		post.Status = models.PostStatus(req.Status)
-	}
-	post.Excerpt = req.Excerpt
-	post.FeaturedImg = req.FeaturedImg
+	// Debug logs
+	log.Printf("DEBUG UpdatePost - Received data:")
+	log.Printf("DEBUG UpdatePost - Title: %s", req.Title)
+	log.Printf("DEBUG UpdatePost - Category: %s", req.Category)
+	log.Printf("DEBUG UpdatePost - Tags: '%s'", req.Tags)
 
-	if err := h.postService.Update(post); err != nil {
+	post, err := h.postService.UpdateWithAssociations(id, &req)
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update post"})
 		return
 	}

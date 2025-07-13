@@ -108,7 +108,7 @@ export const postsService = {
   // Get categories (PUBLIC ROUTE)
   getCategories: async () => {
     try {
-      const response = await api.get('/public/categories');
+      const response = await api.get('public/categories');
       return response.data;
     } catch (error) {
       if (shouldUseMockData(error)) {

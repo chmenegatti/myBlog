@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"log"
 	"math"
 	"strings"
 
@@ -81,6 +82,7 @@ type PostService interface {
 	GetByID(id uuid.UUID) (*models.Post, error)
 	GetBySlug(slug string) (*models.Post, error)
 	Update(post *models.Post) error
+	UpdateWithAssociations(id uuid.UUID, req *UpdatePostRequest) (*models.Post, error)
 	Delete(id uuid.UUID) error
 	List(limit, offset int, status models.PostStatus) ([]*models.Post, int64, error)
 	GetPublished(limit, offset int) ([]*models.Post, int64, error)
@@ -100,8 +102,10 @@ type CreatePostRequest struct {
 	Content     string   `json:"content" binding:"required"`
 	Excerpt     string   `json:"excerpt"`
 	FeaturedImg string   `json:"featured_img"`
-	CategoryIDs []string `json:"category_ids"`
-	TagIDs      []string `json:"tag_ids"`
+	Category    string   `json:"category"`     // Category name (single)
+	Tags        string   `json:"tags"`         // Comma-separated tag names
+	CategoryIDs []string `json:"category_ids"` // Optional: UUID strings for categories
+	TagIDs      []string `json:"tag_ids"`      // Optional: UUID strings for tags
 }
 
 func NewPostService(postRepo repositories.PostRepository, categoryRepo repositories.CategoryRepository, tagRepo repositories.TagRepository) PostService {
@@ -148,11 +152,22 @@ func (s *postService) Create(req *CreatePostRequest, authorID uuid.UUID) (*model
 		ReadingTime: readingTime,
 	}
 
-	if err := s.postRepo.Create(post); err != nil {
+	// Process categories and tags before creating
+	if err := s.processCategories(post, req); err != nil {
 		return nil, err
 	}
 
-	return post, nil
+	if err := s.processTags(post, req); err != nil {
+		return nil, err
+	}
+
+	// Create the post with associations
+	if err := s.postRepo.CreateWithAssociations(post); err != nil {
+		return nil, err
+	}
+
+	// Reload post with associations
+	return s.postRepo.GetByID(post.ID)
 }
 
 func (s *postService) GetByID(id uuid.UUID) (*models.Post, error) {
@@ -207,6 +222,73 @@ func (s *postService) Unpublish(id uuid.UUID) error {
 	return s.postRepo.Update(post)
 }
 
+// UpdatePostRequest for updating posts with categories and tags
+type UpdatePostRequest struct {
+	Title       string `json:"title"`
+	Slug        string `json:"slug"`
+	Content     string `json:"content"`
+	Excerpt     string `json:"excerpt"`
+	FeaturedImg string `json:"featured_img"`
+	Status      string `json:"status"`
+	Category    string `json:"category"` // Category name
+	Tags        string `json:"tags"`     // Comma-separated tag names
+}
+
+// UpdateWithAssociations updates a post and its categories/tags
+func (s *postService) UpdateWithAssociations(id uuid.UUID, req *UpdatePostRequest) (*models.Post, error) {
+	post, err := s.postRepo.GetByID(id)
+	if err != nil {
+		return nil, err
+	}
+
+	// Update basic fields
+	if req.Title != "" {
+		post.Title = req.Title
+	}
+	if req.Slug != "" {
+		post.Slug = req.Slug
+	}
+	if req.Content != "" {
+		post.Content = req.Content
+		// Reprocess markdown content
+		post.ContentHTML = s.markdownService.ToSafeHTML(req.Content)
+		// Recalculate word count and reading time
+		post.WordCount = s.calculateWordCount(req.Content)
+		post.ReadingTime = s.calculateReadingTime(post.WordCount)
+	}
+	if req.Status != "" {
+		post.Status = models.PostStatus(req.Status)
+	}
+	post.Excerpt = req.Excerpt
+	post.FeaturedImg = req.FeaturedImg
+
+	// Process categories and tags
+	createReq := &CreatePostRequest{
+		Category: req.Category,
+		Tags:     req.Tags,
+	}
+
+	// Clear existing associations and set new ones
+	post.Categories = []models.Category{}
+	post.Tags = []models.Tag{}
+
+	if err := s.processCategories(post, createReq); err != nil {
+		return nil, err
+	}
+
+	if err := s.processTags(post, createReq); err != nil {
+		return nil, err
+	}
+
+	// Update the post
+	if err := s.postRepo.UpdateWithAssociations(post); err != nil {
+		return nil, err
+	}
+
+	// Reload post with associations
+	return s.postRepo.GetByID(post.ID)
+}
+
 // Helper function to generate slug from title
 func generateSlug(title string) string {
 	slug := strings.ToLower(title)
@@ -252,4 +334,152 @@ func (s *postService) calculateReadingTime(wordCount int) int {
 	}
 
 	return int(math.Ceil(minutes))
+}
+
+// Helper methods for processing categories and tags
+
+// processCategories handles category assignment for a post
+func (s *postService) processCategories(post *models.Post, req *CreatePostRequest) error {
+	var categories []models.Category
+
+	log.Printf("DEBUG processCategories - Category input: '%s'", req.Category)
+	log.Printf("DEBUG processCategories - CategoryIDs input: %v", req.CategoryIDs)
+
+	// If category name is provided, find or create the category
+	if req.Category != "" && strings.TrimSpace(req.Category) != "" {
+		categoryName := strings.TrimSpace(req.Category)
+		log.Printf("DEBUG processCategories - Looking for category by name: '%s'", categoryName)
+
+		// Try to find existing category by name
+		allCategories, err := s.categoryRepo.List()
+		if err != nil {
+			log.Printf("DEBUG processCategories - Error listing categories: %v", err)
+			return err
+		}
+
+		log.Printf("DEBUG processCategories - Found %d total categories", len(allCategories))
+
+		var foundCategory *models.Category
+		for _, cat := range allCategories {
+			log.Printf("DEBUG processCategories - Comparing '%s' with '%s'", cat.Name, categoryName)
+			if strings.EqualFold(cat.Name, categoryName) {
+				foundCategory = cat
+				log.Printf("DEBUG processCategories - Found matching category: %s (ID: %s)", cat.Name, cat.ID)
+				break
+			}
+		}
+
+		if foundCategory != nil {
+			categories = append(categories, *foundCategory)
+		} else {
+			log.Printf("DEBUG processCategories - No category found with name: '%s'", categoryName)
+		}
+		// If category doesn't exist, we skip it (could create it automatically in the future)
+	}
+
+	// Process CategoryIDs if provided (takes precedence over category name)
+	if len(req.CategoryIDs) > 0 {
+		log.Printf("DEBUG processCategories - Processing CategoryIDs: %v", req.CategoryIDs)
+		categories = []models.Category{} // Reset categories array
+		for _, idStr := range req.CategoryIDs {
+			if id, err := uuid.Parse(idStr); err == nil {
+				if category, err := s.categoryRepo.GetByID(id); err == nil {
+					categories = append(categories, *category)
+					log.Printf("DEBUG processCategories - Added category by ID: %s (%s)", category.Name, category.ID)
+				} else {
+					log.Printf("DEBUG processCategories - Category not found by ID: %s", idStr)
+				}
+			} else {
+				log.Printf("DEBUG processCategories - Invalid category ID format: %s", idStr)
+			}
+		}
+	}
+
+	// Assign categories to post using GORM's association
+	if len(categories) > 0 {
+		post.Categories = categories
+		log.Printf("DEBUG processCategories - Assigned %d categories to post", len(categories))
+	} else {
+		log.Printf("DEBUG processCategories - No categories assigned to post")
+	}
+
+	return nil
+}
+
+// processTags handles tag assignment for a post
+func (s *postService) processTags(post *models.Post, req *CreatePostRequest) error {
+	var tags []models.Tag
+
+	log.Printf("DEBUG processTags - Tags input: '%s'", req.Tags)
+	log.Printf("DEBUG processTags - TagIDs input: %v", req.TagIDs)
+
+	// If tags string is provided, process comma-separated tag names
+	if req.Tags != "" && strings.TrimSpace(req.Tags) != "" {
+		tagNames := strings.Split(req.Tags, ",")
+		log.Printf("DEBUG processTags - Split into %d tag names: %v", len(tagNames), tagNames)
+
+		// Get all existing tags
+		allTags, err := s.tagRepo.List()
+		if err != nil {
+			log.Printf("DEBUG processTags - Error listing tags: %v", err)
+			return err
+		}
+
+		log.Printf("DEBUG processTags - Found %d total tags", len(allTags))
+
+		for _, tagName := range tagNames {
+			tagName = strings.TrimSpace(tagName)
+			if tagName == "" {
+				continue
+			}
+
+			log.Printf("DEBUG processTags - Looking for tag by name: '%s'", tagName)
+
+			// Try to find existing tag by name
+			var foundTag *models.Tag
+			for _, tag := range allTags {
+				log.Printf("DEBUG processTags - Comparing '%s' with '%s'", tag.Name, tagName)
+				if strings.EqualFold(tag.Name, tagName) {
+					foundTag = tag
+					log.Printf("DEBUG processTags - Found matching tag: %s (ID: %s)", tag.Name, tag.ID)
+					break
+				}
+			}
+
+			if foundTag != nil {
+				tags = append(tags, *foundTag)
+			} else {
+				log.Printf("DEBUG processTags - No tag found with name: '%s'", tagName)
+			}
+			// If tag doesn't exist, we skip it (could create it automatically in the future)
+		}
+	}
+
+	// Process TagIDs if provided (takes precedence over tag names)
+	if len(req.TagIDs) > 0 {
+		log.Printf("DEBUG processTags - Processing TagIDs: %v", req.TagIDs)
+		tags = []models.Tag{} // Reset tags array
+		for _, idStr := range req.TagIDs {
+			if id, err := uuid.Parse(idStr); err == nil {
+				if tag, err := s.tagRepo.GetByID(id); err == nil {
+					tags = append(tags, *tag)
+					log.Printf("DEBUG processTags - Added tag by ID: %s (%s)", tag.Name, tag.ID)
+				} else {
+					log.Printf("DEBUG processTags - Tag not found by ID: %s", idStr)
+				}
+			} else {
+				log.Printf("DEBUG processTags - Invalid tag ID format: %s", idStr)
+			}
+		}
+	}
+
+	// Assign tags to post using GORM's association
+	if len(tags) > 0 {
+		post.Tags = tags
+		log.Printf("DEBUG processTags - Assigned %d tags to post", len(tags))
+	} else {
+		log.Printf("DEBUG processTags - No tags assigned to post")
+	}
+
+	return nil
 }

@@ -15,6 +15,8 @@ type PostRepository interface {
 	List(limit, offset int, status models.PostStatus) ([]*models.Post, int64, error)
 	GetPublished(limit, offset int) ([]*models.Post, int64, error)
 	IncrementViewCount(id uuid.UUID) error
+	CreateWithAssociations(post *models.Post) error
+	UpdateWithAssociations(post *models.Post) error
 }
 
 type postRepository struct {
@@ -82,4 +84,52 @@ func (r *postRepository) GetPublished(limit, offset int) ([]*models.Post, int64,
 func (r *postRepository) IncrementViewCount(id uuid.UUID) error {
 	return r.db.Model(&models.Post{}).Where("id = ?", id).
 		UpdateColumn("view_count", gorm.Expr("view_count + ?", 1)).Error
+}
+
+func (r *postRepository) CreateWithAssociations(post *models.Post) error {
+	// Create the post with all associations in a transaction
+	return r.db.Transaction(func(tx *gorm.DB) error {
+		// Create the post first
+		if err := tx.Create(post).Error; err != nil {
+			return err
+		}
+
+		// If categories are provided, associate them
+		if len(post.Categories) > 0 {
+			if err := tx.Model(post).Association("Categories").Replace(post.Categories); err != nil {
+				return err
+			}
+		}
+
+		// If tags are provided, associate them
+		if len(post.Tags) > 0 {
+			if err := tx.Model(post).Association("Tags").Replace(post.Tags); err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
+}
+
+func (r *postRepository) UpdateWithAssociations(post *models.Post) error {
+	// Update the post with all associations in a transaction
+	return r.db.Transaction(func(tx *gorm.DB) error {
+		// Update the basic post fields
+		if err := tx.Save(post).Error; err != nil {
+			return err
+		}
+
+		// Replace categories association
+		if err := tx.Model(post).Association("Categories").Replace(post.Categories); err != nil {
+			return err
+		}
+
+		// Replace tags association
+		if err := tx.Model(post).Association("Tags").Replace(post.Tags); err != nil {
+			return err
+		}
+
+		return nil
+	})
 }

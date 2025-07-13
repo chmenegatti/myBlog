@@ -32,7 +32,7 @@ const PostSettings = ({ post, handleFieldChange }) => {
       try {
         setLoadingCategories(true);
         const response = await postsService.getCategories();
-        setCategories(response.data || []);
+        setCategories(response || []);
       } catch (error) {
         console.error('Error loading categories:', error);
         // Fallback categories if API fails
