@@ -12,6 +12,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import Blog from './pages/Blog';
 import PostDetail from './pages/PostDetail';
+import About from './pages/About';
 import Login from './pages/Login';
 import AdminDashboard from './pages/AdminDashboard';
 import PostEditor from './pages/PostEditor';
@@ -49,14 +50,7 @@ function App() {
                           </div>
                         }
                       />
-                      <Route
-                        path="/about"
-                        element={
-                          <div style={{ padding: '2rem' }}>
-                            About - Coming Soon
-                          </div>
-                        }
-                      />
+                      <Route path="/about" element={<About />} />
                       <Route path="/test-posts" element={<TestPosts />} />
                       <Route
                         path="*"

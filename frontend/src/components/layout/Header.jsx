@@ -78,7 +78,7 @@ const Header = () => {
               fontSize: { xs: '1.2rem', md: '1.5rem' },
             }}
           >
-            MyBlog
+            Cesar Menegatti
           </Typography>
 
           {/* Desktop Navigation */}

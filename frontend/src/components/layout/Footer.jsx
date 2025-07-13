@@ -89,7 +89,7 @@ const Footer = () => {
                 mb: 2,
               }}
             >
-              MyBlog
+              Cesar Menegatti
             </Typography>
             <Typography
               variant="body2"
