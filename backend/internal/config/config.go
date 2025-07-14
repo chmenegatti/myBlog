@@ -87,7 +87,7 @@ func Load() (*Config, error) {
 		},
 		Upload: UploadConfig{
 			Path:    getEnv("UPLOAD_PATH", "./uploads"),
-			BaseURL: getEnv("UPLOAD_BASE_URL", "http://localhost:8080"),
+			BaseURL: getUploadBaseURL(),
 			MaxSize: getEnvAsInt64("UPLOAD_MAX_SIZE", 5<<20), // 5MB default
 		},
 		Logging: LoggingConfig{
@@ -123,4 +123,34 @@ func getEnvAsInt64(key string, defaultValue int64) int64 {
 		}
 	}
 	return defaultValue
+}
+
+func getUploadBaseURL() string {
+	// Priority order for upload base URL:
+	// 1. UPLOAD_BASE_URL environment variable (manual override)
+	// 2. Railway deployment URL (RAILWAY_STATIC_URL or auto-detect)
+	// 3. localhost fallback for development
+
+	if baseURL := os.Getenv("UPLOAD_BASE_URL"); baseURL != "" {
+		return baseURL
+	}
+
+	// For Railway deployment, try to detect the public URL
+	if railwayURL := os.Getenv("RAILWAY_STATIC_URL"); railwayURL != "" {
+		return railwayURL
+	}
+
+	// Check if we're in production environment
+	if env := os.Getenv("SERVER_ENV"); env == "production" {
+		// In production without explicit URL, try to construct from Railway pattern
+		if serviceName := os.Getenv("RAILWAY_SERVICE_NAME"); serviceName != "" {
+			return "https://" + serviceName + ".up.railway.app"
+		}
+		// Generic Railway URL pattern - you should update this with your actual URL
+		return "https://myblog-production-f427.up.railway.app"
+	}
+
+	// Development fallback
+	port := getEnv("PORT", getEnv("SERVER_PORT", "8080"))
+	return "http://localhost:" + port
 }

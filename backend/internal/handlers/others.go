@@ -123,26 +123,26 @@ func (h *MigrationHandler) SeedInitialData(c *gin.Context) {
 		{Name: "Padrões de Concorrência", Description: "Goroutines, channels e padrões de concorrência em Go", Color: "#00758F"},
 		{Name: "Testes em Go", Description: "Testing, benchmarks e qualidade de código", Color: "#FFD23F"},
 		{Name: "Performance", Description: "Otimização e análise de performance em Go", Color: "#FF6B35"},
-		
+
 		// Architecture Categories
 		{Name: "Arquitetura de Software", Description: "Design e arquitetura de sistemas", Color: "#8B5CF6"},
 		{Name: "Microsserviços", Description: "Arquitetura e implementação de microsserviços", Color: "#10B981"},
 		{Name: "Domain-Driven Design (DDD)", Description: "DDD e modelagem de domínio", Color: "#3B82F6"},
 		{Name: "Clean Architecture", Description: "Princípios de arquitetura limpa", Color: "#06B6D4"},
 		{Name: "Padrões de Projeto", Description: "Design patterns e boas práticas", Color: "#8B5CF6"},
-		
+
 		// Systems Categories
 		{Name: "Sistemas Distribuídos", Description: "Sistemas distribuídos e escalabilidade", Color: "#A855F7"},
 		{Name: "APIs e Webservices", Description: "REST, GraphQL e desenvolvimento de APIs", Color: "#10B981"},
 		{Name: "Bancos de Dados", Description: "Integração e otimização de bancos de dados", Color: "#84CC16"},
 		{Name: "Mensageria", Description: "Message queues e comunicação assíncrona", Color: "#F59E0B"},
-		
+
 		// DevOps Categories
 		{Name: "DevOps e Infra", Description: "DevOps, infraestrutura e deployment", Color: "#EF4444"},
 		{Name: "CI/CD", Description: "Continuous Integration e Continuous Deployment", Color: "#06B6D4"},
 		{Name: "Observabilidade", Description: "Monitoramento, logging e métricas", Color: "#8B5CF6"},
 		{Name: "Segurança", Description: "Segurança em aplicações e infraestrutura", Color: "#EF4444"},
-		
+
 		// Community Categories
 		{Name: "Carreira e Mercado", Description: "Carreira, mercado de trabalho e dicas profissionais", Color: "#F97316"},
 		{Name: "Tutoriais", Description: "Tutoriais passo a passo e guias práticos", Color: "#10B981"},
@@ -156,45 +156,45 @@ func (h *MigrationHandler) SeedInitialData(c *gin.Context) {
 	// Seed tags - Updated to be Go-focused
 	tags := []services.CreateTagRequest{
 		// Go Fundamentals
-		{Name: "golang"}, {Name: "go-basics"}, {Name: "goroutines"}, {Name: "channels"}, {Name: "interfaces"}, 
+		{Name: "golang"}, {Name: "go-basics"}, {Name: "goroutines"}, {Name: "channels"}, {Name: "interfaces"},
 		{Name: "structs"}, {Name: "pointers"}, {Name: "slices"}, {Name: "maps"}, {Name: "functions"},
-		
+
 		// Go Advanced
 		{Name: "reflection"}, {Name: "generics"}, {Name: "modules"}, {Name: "embedding"}, {Name: "type-assertion"},
 		{Name: "context"}, {Name: "sync"}, {Name: "atomic"}, {Name: "unsafe"}, {Name: "cgo"},
-		
+
 		// Testing & Quality
 		{Name: "testing"}, {Name: "benchmarks"}, {Name: "fuzzing"}, {Name: "testify"}, {Name: "mocking"},
 		{Name: "code-coverage"}, {Name: "race-detection"}, {Name: "profiling"}, {Name: "debugging"},
-		
+
 		// Web & APIs
-		{Name: "gin"}, {Name: "echo"}, {Name: "fiber"}, {Name: "http"}, {Name: "rest-api"}, 
+		{Name: "gin"}, {Name: "echo"}, {Name: "fiber"}, {Name: "http"}, {Name: "rest-api"},
 		{Name: "grpc"}, {Name: "graphql"}, {Name: "websockets"}, {Name: "middleware"}, {Name: "routing"},
-		
+
 		// Databases
-		{Name: "gorm"}, {Name: "sqlx"}, {Name: "database-sql"}, {Name: "postgresql"}, {Name: "mysql"}, 
+		{Name: "gorm"}, {Name: "sqlx"}, {Name: "database-sql"}, {Name: "postgresql"}, {Name: "mysql"},
 		{Name: "mongodb"}, {Name: "redis"}, {Name: "migrations"}, {Name: "orm"}, {Name: "sql"},
-		
+
 		// Architecture & Patterns
 		{Name: "clean-architecture"}, {Name: "hexagonal"}, {Name: "ddd"}, {Name: "cqrs"}, {Name: "event-sourcing"},
 		{Name: "microservices"}, {Name: "monolith"}, {Name: "design-patterns"}, {Name: "solid"}, {Name: "dependency-injection"},
-		
+
 		// DevOps & Tools
 		{Name: "docker"}, {Name: "kubernetes"}, {Name: "helm"}, {Name: "ci-cd"}, {Name: "github-actions"},
 		{Name: "terraform"}, {Name: "monitoring"}, {Name: "logging"}, {Name: "metrics"}, {Name: "tracing"},
-		
+
 		// Cloud & Infrastructure
 		{Name: "aws"}, {Name: "gcp"}, {Name: "azure"}, {Name: "serverless"}, {Name: "lambda"},
 		{Name: "kafka"}, {Name: "rabbitmq"}, {Name: "nats"}, {Name: "etcd"}, {Name: "consul"},
-		
+
 		// Performance & Optimization
 		{Name: "performance"}, {Name: "optimization"}, {Name: "memory"}, {Name: "cpu"}, {Name: "gc"},
 		{Name: "pprof"}, {Name: "benchmarking"}, {Name: "profiling"}, {Name: "memory-leaks"},
-		
+
 		// Security & Best Practices
 		{Name: "security"}, {Name: "authentication"}, {Name: "authorization"}, {Name: "jwt"}, {Name: "oauth"},
 		{Name: "encryption"}, {Name: "tls"}, {Name: "best-practices"}, {Name: "code-review"}, {Name: "refactoring"},
-		
+
 		// Community & Learning
 		{Name: "tutorial"}, {Name: "beginner"}, {Name: "intermediate"}, {Name: "advanced"}, {Name: "tips"},
 		{Name: "opensource"}, {Name: "community"}, {Name: "career"}, {Name: "interview"}, {Name: "resources"},
@@ -228,10 +228,10 @@ func (h *MigrationHandler) SeedInitialData(c *gin.Context) {
 func (h *MigrationHandler) ClearData(c *gin.Context) {
 	// This endpoint clears all existing categories and tags
 	// Use with caution - only for migration purposes
-	
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Data clearing is disabled for safety. Use manual database operations if needed.",
-		"note": "To clear data, execute: DELETE FROM post_categories; DELETE FROM post_tags; DELETE FROM categories; DELETE FROM tags;",
+		"note":    "To clear data, execute: DELETE FROM post_categories; DELETE FROM post_tags; DELETE FROM categories; DELETE FROM tags;",
 	})
 }
 
