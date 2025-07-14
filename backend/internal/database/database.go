@@ -22,11 +22,11 @@ func New(cfg config.DatabaseConfig) (*DB, error) {
 
 	// Priority order for database connection:
 	// 1. DATABASE_URL from config (Railway/production)
-	// 2. DATABASE_URL directly from environment 
+	// 2. DATABASE_URL directly from environment
 	// 3. Individual config values (local development)
-	
+
 	databaseURL := os.Getenv("DATABASE_URL")
-	
+
 	if cfg.URL != "" {
 		dsn = cfg.URL
 		log.Printf("Using configured DATABASE_URL")
