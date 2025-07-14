@@ -16,7 +16,7 @@ type DB struct {
 
 func New(cfg config.DatabaseConfig) (*DB, error) {
 	var dsn string
-	
+
 	// Check for DATABASE_URL first (Railway format)
 	if cfg.URL != "" {
 		dsn = cfg.URL
