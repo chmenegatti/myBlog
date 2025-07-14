@@ -101,6 +101,74 @@ func (h *CategoryHandler) DeleteCategory(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Category deleted successfully"})
 }
 
+// Migration Handler for seeding initial data
+type MigrationHandler struct {
+	categoryService services.CategoryService
+	tagService      services.TagService
+}
+
+func NewMigrationHandler(categoryService services.CategoryService, tagService services.TagService) *MigrationHandler {
+	return &MigrationHandler{
+		categoryService: categoryService,
+		tagService:      tagService,
+	}
+}
+
+func (h *MigrationHandler) SeedInitialData(c *gin.Context) {
+	// Seed categories
+	categories := []services.CreateCategoryRequest{
+		{Name: "Technology", Description: "Articles about technology, programming, and software development", Color: "#3B82F6"},
+		{Name: "Web Development", Description: "Frontend and backend development tutorials and tips", Color: "#10B981"},
+		{Name: "Design", Description: "UI/UX design, visual design, and design thinking", Color: "#8B5CF6"},
+		{Name: "Programming", Description: "Programming languages, algorithms, and coding practices", Color: "#F59E0B"},
+		{Name: "DevOps", Description: "DevOps practices, CI/CD, and infrastructure", Color: "#EF4444"},
+		{Name: "Mobile", Description: "Mobile app development for iOS and Android", Color: "#06B6D4"},
+		{Name: "Database", Description: "Database design, optimization, and management", Color: "#84CC16"},
+		{Name: "Cloud Computing", Description: "Cloud platforms, serverless, and distributed systems", Color: "#A855F7"},
+		{Name: "AI & Machine Learning", Description: "Artificial Intelligence and Machine Learning topics", Color: "#EC4899"},
+		{Name: "Career", Description: "Career advice, interviews, and professional development", Color: "#F97316"},
+	}
+
+	// Seed tags
+	tags := []services.CreateTagRequest{
+		// Programming Languages
+		{Name: "JavaScript"}, {Name: "TypeScript"}, {Name: "Python"}, {Name: "Go"}, {Name: "Java"}, {Name: "C#"}, {Name: "PHP"}, {Name: "Rust"},
+		// Frameworks
+		{Name: "React"}, {Name: "Vue.js"}, {Name: "Angular"}, {Name: "Next.js"}, {Name: "Node.js"}, {Name: "Express"}, {Name: "Django"}, {Name: "Flask"}, {Name: "Spring Boot"}, {Name: "Laravel"},
+		// Databases
+		{Name: "PostgreSQL"}, {Name: "MySQL"}, {Name: "MongoDB"}, {Name: "Redis"},
+		// Cloud & DevOps
+		{Name: "AWS"}, {Name: "Azure"}, {Name: "Google Cloud"}, {Name: "Docker"}, {Name: "Kubernetes"}, {Name: "CI/CD"},
+		// Tools
+		{Name: "Git"}, {Name: "VS Code"}, {Name: "Figma"}, {Name: "API"}, {Name: "REST"}, {Name: "GraphQL"},
+		// Concepts
+		{Name: "Microservices"}, {Name: "Clean Code"}, {Name: "Testing"}, {Name: "Performance"}, {Name: "Security"}, {Name: "Tutorial"}, {Name: "Best Practices"}, {Name: "Tips"},
+	}
+
+	createdCategories := 0
+	createdTags := 0
+
+	// Create categories
+	for _, catReq := range categories {
+		if _, err := h.categoryService.Create(&catReq); err == nil {
+			createdCategories++
+		}
+	}
+
+	// Create tags
+	for _, tagReq := range tags {
+		if _, err := h.tagService.Create(&tagReq); err == nil {
+			createdTags++
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Initial data seeded successfully",
+		"categories_created": createdCategories,
+		"tags_created": createdTags,
+	})
+}
+
 // Tag Handler
 type TagHandler struct {
 	tagService services.TagService

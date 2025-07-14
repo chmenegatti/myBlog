@@ -54,9 +54,10 @@ func New(cfg *config.Config) (*App, error) {
 	commentHandler := handlers.NewCommentHandler(commentService)
 	newsletterHandler := handlers.NewNewsletterHandler(newsletterService)
 	imageHandler := handlers.NewImageHandler(imageService)
+	migrationHandler := handlers.NewMigrationHandler(categoryService, tagService)
 
 	// Setup router
-	router := setupRouter(cfg, authHandler, userHandler, postHandler, categoryHandler, tagHandler, commentHandler, newsletterHandler, imageHandler)
+	router := setupRouter(cfg, authHandler, userHandler, postHandler, categoryHandler, tagHandler, commentHandler, newsletterHandler, imageHandler, migrationHandler)
 
 	return &App{
 		config: cfg,
@@ -79,6 +80,7 @@ func setupRouter(
 	commentHandler *handlers.CommentHandler,
 	newsletterHandler *handlers.NewsletterHandler,
 	imageHandler *handlers.ImageHandler,
+	migrationHandler *handlers.MigrationHandler,
 ) *gin.Engine {
 	if cfg.Server.Env == "production" {
 		gin.SetMode(gin.ReleaseMode)
@@ -120,6 +122,8 @@ func setupRouter(
 			public.GET("/comments/post/:post_id", commentHandler.GetCommentsByPost)
 			public.POST("/newsletter/subscribe", newsletterHandler.Subscribe)
 			public.GET("/newsletter/unsubscribe/:token", newsletterHandler.Unsubscribe)
+			// Temporary migration endpoint
+			public.POST("/seed-initial-data", migrationHandler.SeedInitialData)
 		}
 
 		// Protected routes
