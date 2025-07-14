@@ -21,8 +21,8 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main ./cmd/main.g
 # Final stage
 FROM alpine:latest
 
-# Install ca-certificates and timezone data
-RUN apk --no-cache add ca-certificates tzdata
+# Install ca-certificates, timezone data, and curl for health checks
+RUN apk --no-cache add ca-certificates tzdata curl
 
 WORKDIR /app
 
@@ -34,6 +34,10 @@ COPY backend/migrations/ ./migrations/
 
 # Create uploads directory
 RUN mkdir -p /app/uploads
+
+# Add health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:${PORT:-8080}/health || exit 1
 
 # Expose port (Railway uses PORT environment variable)
 EXPOSE $PORT

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/chmenegatti/myBlog/internal/config"
 	"github.com/chmenegatti/myBlog/internal/models"
@@ -19,25 +20,23 @@ type DB struct {
 func New(cfg config.DatabaseConfig) (*DB, error) {
 	var dsn string
 
-	// Debug: Check environment variables
+	// Priority order for database connection:
+	// 1. DATABASE_URL from config (Railway/production)
+	// 2. DATABASE_URL directly from environment 
+	// 3. Individual config values (local development)
+	
 	databaseURL := os.Getenv("DATABASE_URL")
-	log.Printf("DEBUG: DATABASE_URL from env: %s", databaseURL)
-	log.Printf("DEBUG: cfg.URL: %s", cfg.URL)
-	log.Printf("DEBUG: cfg.Host: %s", cfg.Host)
-
-	// Check for DATABASE_URL first (Railway format)
+	
 	if cfg.URL != "" {
 		dsn = cfg.URL
-		log.Printf("Using cfg.URL: %s", dsn)
+		log.Printf("Using configured DATABASE_URL")
 	} else if databaseURL != "" {
-		// Fallback: get directly from environment
 		dsn = databaseURL
-		log.Printf("Using DATABASE_URL directly: %s", dsn)
+		log.Printf("Using DATABASE_URL from environment")
 	} else {
-		// Use individual config values
 		dsn = fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
 			cfg.Host, cfg.User, cfg.Password, cfg.Name, cfg.Port, cfg.SSLMode)
-		log.Printf("Using individual config: %s", dsn)
+		log.Printf("Using individual database config (development mode)")
 	}
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
@@ -65,4 +64,30 @@ func New(cfg config.DatabaseConfig) (*DB, error) {
 
 func (db *DB) GetDB() *gorm.DB {
 	return db.DB
+}
+
+// maskPassword masks the password in a DSN string for safe logging
+func maskPassword(dsn string) string {
+	if strings.Contains(dsn, "password=") {
+		parts := strings.Split(dsn, " ")
+		for i, part := range parts {
+			if strings.HasPrefix(part, "password=") {
+				parts[i] = "password=****"
+			}
+		}
+		return strings.Join(parts, " ")
+	}
+	// For postgres:// URLs, mask the password part
+	if strings.HasPrefix(dsn, "postgres://") && strings.Contains(dsn, ":") && strings.Contains(dsn, "@") {
+		parts := strings.Split(dsn, "@")
+		if len(parts) == 2 {
+			userPart := strings.Split(parts[0], ":")
+			if len(userPart) >= 3 {
+				userPart[2] = "****"
+				parts[0] = strings.Join(userPart, ":")
+			}
+			return strings.Join(parts, "@")
+		}
+	}
+	return dsn
 }
