@@ -57,8 +57,23 @@ const PostEditor = () => {
         const response = await postsService.getPostById(id);
 
         if (response.data) {
-          setPost(response.data);
-          const words = calculateWordCount(response.data.content);
+          // Transform API data structure to match frontend expectations
+          const postData = {
+            ...response.data,
+            // Convert categories array to single category string
+            category:
+              response.data.categories && response.data.categories.length > 0
+                ? response.data.categories[0].name
+                : '',
+            // Convert tags array to comma-separated string
+            tags:
+              response.data.tags && response.data.tags.length > 0
+                ? response.data.tags.map(tag => tag.name).join(', ')
+                : '',
+          };
+
+          setPost(postData);
+          const words = calculateWordCount(postData.content);
           setWordCount(words);
           setReadingTime(calculateReadingTime(words));
         } else {
