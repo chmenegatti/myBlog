@@ -24,6 +24,7 @@ type ServerConfig struct {
 }
 
 type DatabaseConfig struct {
+	URL      string // Database URL (Railway format)
 	Host     string
 	Port     string
 	User     string
@@ -67,6 +68,7 @@ func Load() (*Config, error) {
 			Env:  getEnv("SERVER_ENV", "development"),
 		},
 		Database: DatabaseConfig{
+			URL:      getEnv("DATABASE_URL", ""), // Railway format
 			Host:     getEnv("DB_HOST", "localhost"),
 			Port:     getEnv("DB_PORT", "5432"),
 			User:     getEnv("DB_USER", "postgres"),

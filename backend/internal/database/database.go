@@ -2,7 +2,6 @@ package database
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/chmenegatti/myBlog/internal/config"
 	"github.com/chmenegatti/myBlog/internal/models"
@@ -17,10 +16,10 @@ type DB struct {
 
 func New(cfg config.DatabaseConfig) (*DB, error) {
 	var dsn string
-
+	
 	// Check for DATABASE_URL first (Railway format)
-	if databaseURL := os.Getenv("DATABASE_URL"); databaseURL != "" {
-		dsn = databaseURL
+	if cfg.URL != "" {
+		dsn = cfg.URL
 	} else {
 		// Use individual config values
 		dsn = fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
