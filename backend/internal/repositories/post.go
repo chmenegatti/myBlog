@@ -33,7 +33,9 @@ func (r *postRepository) Create(post *models.Post) error {
 
 func (r *postRepository) GetByID(id uuid.UUID) (*models.Post, error) {
 	var post models.Post
-	err := r.db.Preload("Author").Preload("Categories").Preload("Tags").
+	err := r.db.Preload("Author").
+		Preload("Categories", func(db *gorm.DB) *gorm.DB { return db.Order("categories.name ASC") }).
+		Preload("Tags", func(db *gorm.DB) *gorm.DB { return db.Order("tags.name ASC") }).
 		Where("id = ?", id).First(&post).Error
 	if err != nil {
 		return nil, err
@@ -43,7 +45,9 @@ func (r *postRepository) GetByID(id uuid.UUID) (*models.Post, error) {
 
 func (r *postRepository) GetBySlug(slug string) (*models.Post, error) {
 	var post models.Post
-	err := r.db.Preload("Author").Preload("Categories").Preload("Tags").
+	err := r.db.Preload("Author").
+		Preload("Categories", func(db *gorm.DB) *gorm.DB { return db.Order("categories.name ASC") }).
+		Preload("Tags", func(db *gorm.DB) *gorm.DB { return db.Order("tags.name ASC") }).
 		Where("slug = ? AND status = ?", slug, models.StatusPublished).First(&post).Error
 	if err != nil {
 		return nil, err
@@ -63,7 +67,9 @@ func (r *postRepository) List(limit, offset int, status models.PostStatus) ([]*m
 	var posts []*models.Post
 	var total int64
 
-	query := r.db.Model(&models.Post{}).Preload("Author").Preload("Categories").Preload("Tags")
+	query := r.db.Model(&models.Post{}).Preload("Author").
+		Preload("Categories", func(db *gorm.DB) *gorm.DB { return db.Order("categories.name ASC") }).
+		Preload("Tags", func(db *gorm.DB) *gorm.DB { return db.Order("tags.name ASC") })
 
 	if status != "" {
 		query = query.Where("status = ?", status)

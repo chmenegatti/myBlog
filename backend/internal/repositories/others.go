@@ -50,7 +50,7 @@ func (r *categoryRepository) Delete(id uuid.UUID) error {
 
 func (r *categoryRepository) List() ([]*models.Category, error) {
 	var categories []*models.Category
-	err := r.db.Find(&categories).Error
+	err := r.db.Order("name ASC").Find(&categories).Error
 	return categories, err
 }
 
@@ -98,7 +98,7 @@ func (r *tagRepository) Delete(id uuid.UUID) error {
 
 func (r *tagRepository) List() ([]*models.Tag, error) {
 	var tags []*models.Tag
-	err := r.db.Find(&tags).Error
+	err := r.db.Order("name ASC").Find(&tags).Error
 	return tags, err
 }
 
